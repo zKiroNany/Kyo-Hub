@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyo Hub — Premium Scripts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple-deep:   #1a0a2e;
+    --purple-core:   #6b21d6;
+    --purple-bright: #a855f7;
+    --purple-glow:   #c084fc;
+    --purple-mist:   #e9d5ff22;
+    --white:         #f5f0ff;
+    --off:           #c4b5fd88;
+    --bg:            #09050f;
+    --border:        #6b21d630;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body {
+    width:100%; height:100%; overflow:hidden;
+    background: var(--bg);
+    font-family: 'Syne', sans-serif;
+    color: var(--white);
+    cursor: default;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content:''; position:fixed; inset:0; z-index:9999; pointer-events:none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: .45;
+  }
+
+  /* ══════════════════════════════════════
+     LOADING SCREEN
+  ══════════════════════════════════════ */
+  #loader {
+    position:fixed; inset:0; z-index:1000;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    background: var(--bg);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  #loader.exit {
+    opacity:0;
+    transform: scale(1.04);
+    pointer-events:none;
+  }
+
+  /* scanlines on loader */
+  #loader::after {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent, transparent 2px,
+      rgba(107,33,214,.04) 2px, rgba(107,33,214,.04) 4px
+    );
+  }
+
+  /* corner brackets */
+  .corner { position:absolute; width:48px; height:48px; }
+  .corner::before, .corner::after {
+    content:''; position:absolute;
+    background: var(--purple-bright);
+    border-radius: 1px;
+  }
+  .corner::before { width:2px; height:100%; }
+  .corner::after  { width:100%; height:2px; }
+  .corner.tl { top:32px; left:32px; }
+  .corner.tr { top:32px; right:32px; transform: scaleX(-1); }
+  .corner.bl { bottom:32px; left:32px; transform: scaleY(-1); }
+  .corner.br { bottom:32px; right:32px; transform: scale(-1); }
+
+  /* ── LIQUID TEXT WRAPPER ── */
+  .liquid-wrap {
+    position:relative;
+    display:inline-block;
+    margin-bottom:12px;
+  }
+
+  /* base text – always white, bold */
+  .liquid-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 12vw, 130px);
+    letter-spacing: 0.06em;
+    color: var(--white);
+    position:relative;
+    z-index:2;
+    user-select:none;
+    line-height:1;
+    -webkit-text-stroke: 1px rgba(200,160,255,0.3);
+  }
+
+  /* the purple liquid – clip rises from bottom */
+  .liquid-title .fill {
+    position:absolute; inset:0;
+    color: var(--purple-bright);
+    background: linear-gradient(
+      to bottom,
+      var(--purple-glow) 0%,
+      var(--purple-core) 60%,
+      var(--purple-deep) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    /* clip-path rises: start fully clipped (bottom), rise to top */
+    clip-path: inset(100% 0% 0% 0%);
+    transition: clip-path 0s;
+    z-index:3;
+    pointer-events:none;
+  }
+
+  /* animated glow pulse on title */
+  .liquid-title {
+    text-shadow:
+      0 0 80px rgba(168,85,247,0),
+      0 0 0px rgba(168,85,247,0);
+    transition: text-shadow .4s ease;
+  }
+  .liquid-title.glowing {
+    text-shadow:
+      0 0 60px rgba(168,85,247,.9),
+      0 0 120px rgba(168,85,247,.4);
+  }
+
+  /* shake + expand before exit */
+  @keyframes shakePop {
+    0%   { transform: scale(1) translateX(0); }
+    10%  { transform: scale(1.02) translateX(-4px); }
+    20%  { transform: scale(1.02) translateX(4px); }
+    30%  { transform: scale(1.02) translateX(-3px); }
+    40%  { transform: scale(1.02) translateX(3px); }
+    55%  { transform: scale(1.08) translateX(0); }
+    70%  { transform: scale(1.05) translateX(0); }
+    100% { transform: scale(1.1) translateX(0); opacity:0; }
+  }
+  .liquid-wrap.pop { animation: shakePop .7s ease forwards; }
+
+  /* ── WORDS STREAM ── */
+  #word-stream {
+    height:28px;
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:40px;
+    min-width:300px;
+    justify-content:center;
+  }
+  .word-tag {
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    padding: 3px 10px;
+    border: 1px solid var(--purple-bright);
+    color: var(--purple-bright);
+    border-radius:2px;
+    opacity:0;
+    transform: translateY(8px) scale(.9);
+    animation: tagIn .35s ease forwards;
+    background: rgba(107,33,214,.15);
+    box-shadow: 0 0 12px rgba(107,33,214,.4);
+  }
+  @keyframes tagIn {
+    to { opacity:1; transform: translateY(0) scale(1); }
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-track {
+    width:280px; height:2px;
+    background: rgba(168,85,247,.15);
+    border-radius:99px;
+    overflow:hidden;
+    margin-bottom:36px;
+  }
+  .progress-fill {
+    height:100%;
+    width:0%;
+    background: linear-gradient(90deg, var(--purple-core), var(--purple-glow));
+    border-radius:99px;
+    transition: width .4s ease;
+    box-shadow: 0 0 12px var(--purple-bright);
+  }
+
+  /* ── FOOTER LABEL ── */
+  .loader-footer {
+    position:absolute; bottom:40px;
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    letter-spacing:.35em;
+    text-transform:uppercase;
+    color: var(--off);
+  }
+  .loader-footer span {
+    color: var(--purple-bright);
+  }
+
+  /* ── PARTICLES ── */
+  #particles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+  .spark {
+    position:absolute;
+    width:2px; height:2px;
+    border-radius:50%;
+    background:var(--purple-bright);
+    opacity:0;
+    animation: sparkFloat var(--d,4s) var(--delay,0s) ease-in infinite;
+  }
+  @keyframes sparkFloat {
+    0%   { opacity:0; transform: translate(0,0) scale(1); }
+    20%  { opacity:.8; }
+    100% { opacity:0; transform: translate(var(--dx,20px), var(--dy,-120px)) scale(0); }
+  }
+
+  /* ══════════════════════════════════════
+     MAIN SITE (hidden until load done)
+  ══════════════════════════════════════ */
+  #app {
+    position:fixed; inset:0; z-index:1;
+    opacity:0; pointer-events:none;
+    transition: opacity .9s ease .1s;
+    overflow-y:auto;
+    scroll-behavior:smooth;
+  }
+  #app.visible { opacity:1; pointer-events:all; }
+
+  /* ─── NAV ─── */
+  nav {
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 40px;
+    background: rgba(9,5,15,.75);
+    backdrop-filter: blur(20px) saturate(1.4);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:26px; letter-spacing:.1em;
+    color: var(--purple-bright);
+    text-shadow: 0 0 20px rgba(168,85,247,.6);
+  }
+  .nav-logo span { color:var(--white); }
+  .nav-links {
+    display:flex; gap:32px; list-style:none;
+  }
+  .nav-links a {
+    font-size:12px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--off); text-decoration:none;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color:var(--purple-glow); }
+  .nav-badge {
+    font-family:'Space Mono',monospace;
+    font-size:10px; letter-spacing:.15em;
+    padding:5px 14px;
+    border:1px solid var(--purple-bright);
+    color:var(--purple-bright);
+    border-radius:2px;
+    background: rgba(107,33,214,.12);
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height:90vh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:80px 40px;
+    position:relative; overflow:hidden;
+    text-align:center;
+  }
+  .hero-bg {
+    position:absolute; inset:0; z-index:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(107,33,214,.22) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 20% 80%, rgba(168,85,247,.1) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 10%, rgba(192,132,252,.08) 0%, transparent 60%);
+  }
+  .hero-eyebrow {
+    font-family:'Space Mono',monospace;
+    font-size:11px; letter-spacing:.4em; text-transform:uppercase;
+    color:var(--purple-bright); margin-bottom:20px;
+    opacity:0; transform:translateY(20px);
+    animation: fadeUp .6s .2s ease forwards;
+  }
+  .hero-title {
+    font-family:'Bebas Neue',sans-serif;
+    font-size: clamp(64px, 11vw, 160px);
+    line-height:.95; letter-spacing:.04em;
+    color:var(--white);
+    position:relative; z-index:1;
+    opacity:0; transform:translateY(30px);
+    animation: fadeUp .7s .35s ease forwards;
+  }
+  .hero-title .accent { color:var(--purple-bright); }
+  .hero-sub {
+    max-width:560px; margin: 24px auto 0;
+    font-size:15px; line-height:1.7;
+    color:var(--off);
+    opacity:0; transform:translateY(20px);
+    animation: fadeUp .6s .55s ease forwards;
+  }
+  .hero-cta {
+    display:flex; gap:14px; margin-top:48px;
+    opacity:0; transform:translateY(20px);
+    animation: fadeUp .6s .7s ease forwards;
+    flex-wrap:wrap; justify-content:center;
+  }
+  .btn-primary {
+    padding:14px 36px;
+    background: linear-gradient(135deg, var(--purple-core), var(--purple-bright));
+    color:var(--white); border:none; border-radius:3px;
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.15em;
+    text-transform:uppercase; cursor:pointer; text-decoration:none;
+    box-shadow: 0 0 40px rgba(107,33,214,.5);
+    transition: box-shadow .2s, transform .2s;
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 60px rgba(107,33,214,.7); }
+  .btn-ghost {
+    padding:14px 36px;
+    background:transparent;
+    border:1px solid var(--purple-bright); color:var(--purple-glow);
+    border-radius:3px; font-family:'Space Mono',monospace; font-size:12px;
+    letter-spacing:.15em; text-transform:uppercase; cursor:pointer; text-decoration:none;
+    transition: background .2s, transform .2s;
+  }
+  .btn-ghost:hover { background:rgba(107,33,214,.15); transform:translateY(-2px); }
+
+  @keyframes fadeUp {
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  /* ─── STATS STRIP ─── */
+  .stats-strip {
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    display:flex; flex-wrap:wrap;
+    background:rgba(26,10,46,.4);
+  }
+  .stat-item {
+    flex:1; min-width:160px;
+    padding:36px 32px;
+    text-align:center;
+    border-right:1px solid var(--border);
+    transition: background .2s;
+  }
+  .stat-item:last-child { border-right:none; }
+  .stat-item:hover { background:rgba(107,33,214,.08); }
+  .stat-num {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:52px; line-height:1;
+    color:var(--purple-bright);
+    text-shadow: 0 0 30px rgba(168,85,247,.5);
+  }
+  .stat-label {
+    font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--off); margin-top:4px;
+    font-family:'Space Mono',monospace;
+  }
+
+  /* ─── SECTION ─── */
+  section { padding:100px 40px; max-width:1200px; margin:0 auto; }
+  .section-eyebrow {
+    font-family:'Space Mono',monospace;
+    font-size:10px; letter-spacing:.4em; text-transform:uppercase;
+    color:var(--purple-bright); margin-bottom:14px;
+  }
+  .section-title {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(36px,5vw,64px);
+    color:var(--white); line-height:1.05; margin-bottom:16px;
+  }
+  .section-title .dim { color:var(--off); }
+  .section-desc {
+    font-size:15px; line-height:1.75; color:var(--off);
+    max-width:580px;
+  }
+
+  /* ─── FEATURES GRID ─── */
+  .features-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap:2px; margin-top:64px;
+    border:2px solid var(--border);
+  }
+  .feat-card {
+    padding:36px 32px;
+    background:rgba(26,10,46,.35);
+    border:1px solid transparent;
+    transition: background .25s, border-color .25s, transform .25s;
+    position:relative; overflow:hidden;
+  }
+  .feat-card::before {
+    content:''; position:absolute; top:0; left:0;
+    width:100%; height:2px;
+    background: linear-gradient(90deg, transparent, var(--purple-core), transparent);
+    opacity:0; transition: opacity .25s;
+  }
+  .feat-card:hover { background:rgba(107,33,214,.12); border-color:var(--border); transform:translateY(-2px); }
+  .feat-card:hover::before { opacity:1; }
+  .feat-icon {
+    width:40px; height:40px; margin-bottom:20px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--border);
+    border-radius:6px; background:rgba(107,33,214,.15);
+    font-size:18px;
+  }
+  .feat-title {
+    font-family:'Syne',sans-serif; font-weight:700;
+    font-size:16px; color:var(--white); margin-bottom:8px;
+  }
+  .feat-desc { font-size:13px; line-height:1.7; color:var(--off); }
+  .feat-tag {
+    display:inline-block; margin-top:14px;
+    font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.2em;
+    text-transform:uppercase; padding:3px 8px;
+    border:1px solid rgba(168,85,247,.3); color:var(--purple-bright);
+    border-radius:2px;
+  }
+
+  /* ─── GAMES SECTION ─── */
+  .games-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+    gap:16px; margin-top:56px;
+  }
+  .game-card {
+    padding:28px 24px;
+    border:1px solid var(--border);
+    border-radius:4px;
+    background: linear-gradient(135deg, rgba(26,10,46,.6), rgba(9,5,15,.8));
+    position:relative; overflow:hidden;
+    transition:transform .2s, border-color .2s, box-shadow .2s;
+    cursor:default;
+  }
+  .game-card:hover {
+    transform:translateY(-4px);
+    border-color:rgba(168,85,247,.5);
+    box-shadow:0 8px 40px rgba(107,33,214,.25);
+  }
+  .game-card-glow {
+    position:absolute; top:-40px; right:-40px;
+    width:100px; height:100px; border-radius:50%;
+    background: radial-gradient(circle, rgba(168,85,247,.25), transparent 70%);
+    pointer-events:none;
+  }
+  .game-name {
+    font-family:'Syne',sans-serif; font-weight:800;
+    font-size:17px; color:var(--white); margin-bottom:6px;
+  }
+  .game-count {
+    font-family:'Space Mono',monospace; font-size:10px;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--purple-bright);
+    margin-bottom:12px;
+  }
+  .game-tags { display:flex; flex-wrap:wrap; gap:5px; }
+  .gtag {
+    font-size:9px; font-family:'Space Mono',monospace;
+    letter-spacing:.1em; padding:2px 7px;
+    background:rgba(107,33,214,.18); color:var(--off);
+    border:1px solid var(--border); border-radius:2px;
+  }
+  .game-status {
+    position:absolute; top:16px; right:16px;
+    width:7px; height:7px; border-radius:50%;
+    background:#4ade80;
+    box-shadow:0 0 10px #4ade80;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100%{box-shadow:0 0 6px #4ade80;} 50%{box-shadow:0 0 16px #4ade80;}
+  }
+
+  /* ─── ARCHITECTURE ─── */
+  .arch-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:2px;
+    margin-top:64px; border:2px solid var(--border);
+  }
+  @media(max-width:700px){ .arch-grid { grid-template-columns:1fr; } }
+  .arch-block {
+    padding:40px 36px;
+    background:rgba(26,10,46,.3);
+    border:1px solid transparent;
+  }
+  .arch-block:hover { background:rgba(107,33,214,.08); }
+  .arch-label {
+    font-family:'Space Mono',monospace; font-size:9px;
+    letter-spacing:.3em; text-transform:uppercase;
+    color:var(--purple-bright); margin-bottom:12px;
+  }
+  .arch-name {
+    font-family:'Bebas Neue',sans-serif; font-size:28px;
+    color:var(--white); letter-spacing:.06em; margin-bottom:10px;
+  }
+  .arch-desc { font-size:13px; line-height:1.75; color:var(--off); }
+  .code-chip {
+    display:inline-block; margin-top:16px;
+    font-family:'Space Mono',monospace; font-size:11px;
+    padding:8px 14px;
+    background:rgba(9,5,15,.8); border:1px solid var(--border);
+    border-radius:3px; color:var(--purple-glow);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top:1px solid var(--border);
+    padding:48px 40px;
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:20px;
+    background:rgba(9,5,15,.95);
+  }
+  .footer-logo {
+    font-family:'Bebas Neue',sans-serif; font-size:22px;
+    letter-spacing:.12em; color:var(--purple-bright);
+  }
+  .footer-note {
+    font-family:'Space Mono',monospace; font-size:10px;
+    letter-spacing:.15em; color:var(--off); text-align:center;
+  }
+  .footer-copy {
+    font-family:'Space Mono',monospace; font-size:10px;
+    color:rgba(196,181,253,.3); letter-spacing:.1em;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--purple-core); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ LOADER ══════════════ -->
+<div id="loader">
+  <div id="particles"></div>
+
+  <!-- corners -->
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <!-- word stream -->
+  <div id="word-stream"></div>
+
+  <!-- liquid title -->
+  <div class="liquid-wrap" id="liquidWrap">
+    <div class="liquid-title" id="baseTitle">
+      KYO HUB
+      <span class="fill" id="fillTitle">KYO HUB</span>
+    </div>
+  </div>
+
+  <!-- progress bar -->
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <!-- footer -->
+  <div class="loader-footer">
+    <span>Premium Scripts</span> · Lua Automation · Multi-Game Hub
+  </div>
+</div>
+
+<!-- ══════════════ MAIN SITE ══════════════ -->
+<div id="app">
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">KYO<span> HUB</span></div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#games">Games</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+    </ul>
+    <div class="nav-badge">v2.0 Stable</div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <p class="hero-eyebrow">Multi-Game Lua Script Hub</p>
+    <h1 class="hero-title">KYO<br><span class="accent">HUB</span></h1>
+    <p class="hero-sub">
+      A feature-rich automation hub targeting multiple Roblox games. Built around Fluent UI with a unified architecture, smart teleport engines, and deep per-game integration.
+    </p>
+    <div class="hero-cta">
+      <a href="https://github.com" class="btn-primary">View on GitHub</a>
+      <a href="#features" class="btn-ghost">Explore Features</a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-strip">
+    <div class="stat-item"><div class="stat-num">7+</div><div class="stat-label">Games Supported</div></div>
+    <div class="stat-item"><div class="stat-num">60+</div><div class="stat-label">Automation Features</div></div>
+    <div class="stat-item"><div class="stat-num">1</div><div class="stat-label">Unified Loader</div></div>
+    <div class="stat-item"><div class="stat-num">∞</div><div class="stat-label">Community Driven</div></div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <p class="section-eyebrow">// capabilities</p>
+    <h2 class="section-title">Built to <span class="dim">Automate</span><br>Everything</h2>
+    <p class="section-desc">
+      Kyo Hub is engineered for reliability. Every feature shares a unified state system — no conflicting loops, no leaked threads.
+    </p>
+
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">Heartbeat Farm Engine</div>
+        <div class="feat-desc">Generic FarmTarget loop powered by RunService.Heartbeat. Smart teleport with retry logic, tween-based movement for distances over 80 studs to avoid server rubberbanding.</div>
+        <span class="feat-tag">Core System</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎯</div>
+        <div class="feat-title">Silent Aim</div>
+        <div class="feat-desc">UIS.InputBegan + temporary Camera.CFrame swap via CFrame.lookAt. Unified toggle for both click and hold modes. Triggerbot keybind included.</div>
+        <span class="feat-tag">Combat</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔮</div>
+        <div class="feat-title">Priority System</div>
+        <div class="feat-desc">Three-level boss/mob/none priority dropdowns. Unified EntityTP table replaces separate lookup structures. Dynamic target switching mid-farm.</div>
+        <span class="feat-tag">Automation</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔔</div>
+        <div class="feat-title">Discord Webhooks</div>
+        <div class="feat-desc">Rich embed notifications with event-type color coding. Deduplication logic for gold skins and loot events. Stored stands list for Stands Upright alerts.</div>
+        <span class="feat-tag">Notifications</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎰</div>
+        <div class="feat-title">Auto Roll System</div>
+        <div class="feat-desc">Four exclusive roll modes with alias support. Slot-aware stand storage via SwitchStand remote. Webhook embed on rare pulls.</div>
+        <span class="feat-tag">Gacha</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌐</div>
+        <div class="feat-title">PlaceHopper</div>
+        <div class="feat-desc">Cross-server teleport utility with teleport token error handling. PlaceId-aware configuration. Automatic retry on failure with configurable delay.</div>
+        <span class="feat-tag">Utility</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🛡️</div>
+        <div class="feat-title">No Spread / No Recoil</div>
+        <div class="feat-desc">rawset on module tables bypasses anti-cheat hooks. Targets the Bullet module in ReplicatedStorage.Components without triggering hookfunction detections.</div>
+        <span class="feat-tag">BloxStrike</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📡</div>
+        <div class="feat-title">ESP & Visuals</div>
+        <div class="feat-desc">Drawing API double-box ESP with HP bars, name/distance/weapon labels, tracers, Chams with KyoCham deduplication, and mine/trap ESP with pulsing highlight effects.</div>
+        <span class="feat-tag">Visuals</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚙️</div>
+        <div class="feat-title">SaveManager Integration</div>
+        <div class="feat-desc">Full Fluent UI SaveManager + InterfaceManager integration. Config profiles persist across sessions. Clean separation between per-game and shared settings.</div>
+        <span class="feat-tag">Config</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAMES -->
+  <section id="games" style="background:rgba(26,10,46,.15); max-width:100%; padding:80px 40px;">
+    <div style="max-width:1200px;margin:0 auto;">
+      <p class="section-eyebrow">// supported games</p>
+      <h2 class="section-title">One Hub.<br><span class="dim">Every Game.</span></h2>
+      <p class="section-desc">Each game module is isolated by PlaceId in the unified Luarmor loader. Shared utilities live at the top; game logic never bleeds across modules.</p>
+
+      <div class="games-grid">
+        <div class="game-card">
+          <div class="game-card-glow"></div>
+          <div class="game-status"></div>
+          <div class="game-name">Sailor Piece</div>
+          <div class="game-count">15+ Features</div>
+          <div class="game-tags">
+            <span class="gtag">Auto Boss</span>
+            <span class="gtag">Auto Grind</span>
+            <span class="gtag">Pity Farm</span>
+            <span class="gtag">NPC TP</span>
+            <span class="gtag">Auto LVL</span>
+          </div>
+        </div>
+        <div class="game-card">
+          <div class="game-card-glow"></div>
+          <div class="game-status"></div>
+          <div class="game-name">Stands Upright</div>
+          <div class="game-count">12+ Features</div>
+          <div class="game-tags">
+            <span class="gtag">Auto Roll</span>
+            <span class="gtag">Auto Lair</span>
+            <span class="gtag">Auto Skills</span>
+            <span class="gtag">Collect Items</span>
+          </div>
+        </div>
+        <div class="game-card">
+          <div class="game-card-glow"></div>
+          <div class="game-status"></div>
+          <div class="game-name">BloxStrike</div>
+          <div class="game-count">10+ Features</div>
+          <div class="game-tags">
+            <span class="gtag">No Spread</span>
+            <span class="gtag">Silent Aim</span>
+            <span class="gtag">Bhop</span>
+            <span class="gtag">Skin Changer</span>
+          </div>
+        </div>
+        <div class="game-card">
+          <div class="game-card-glow"></div>
+          <div class="game-status"></div>
+          <div class="game-name">ABA</div>
+          <div class="game-count">8+ Features</div>
+          <div class="game-tags">
+            <span class="gtag">Gold Farm</span>
+            <span class="gtag">Auto Vote</span>
+            <span class="gtag">Flick Aim</span>
+            <span class="gtag">Mine ESP</span>
+          </div>
+        </div>
+        <div class="game-card">
+          <div class="game-card-glow"></div>
+          <div class="game-status"></div>
+          <div class="game-name">Jood Piece</div>
+          <div class="game-count">8+ Features</div>
+          <div class="game-tags">
+            <span class="gtag">Auto Roll</span>
+            <span class="gtag">Auto M1</span>
+            <span class="gtag">Webhook</span>
+            <span class="gtag">Island Load</span>
+          </div>
+        </div>
+        <div class="game-card">
+          <div class="game-card-glow"></div>
+          <div class="game-status"></div>
+          <div class="game-name">Counter Blox</div>
+          <div class="game-count">7+ Features</div>
+          <div class="game-tags">
+            <span class="gtag">ESP</span>
+            <span class="gtag">Chams</span>
+            <span class="gtag">Auto Fire</span>
+            <span class="gtag">FOV Circle</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section id="architecture">
+    <p class="section-eyebrow">// under the hood</p>
+    <h2 class="section-title">Engineered<br><span class="dim">Architecture</span></h2>
+    <p class="section-desc">
+      Every system follows strict conventions. Centralized state, isolated threads, and clean remote management — no spaghetti, no leaks.
+    </p>
+    <div class="arch-grid">
+      <div class="arch-block">
+        <div class="arch-label">State Management</div>
+        <div class="arch-name">Variables</div>
+        <div class="arch-desc">Centralized Toggles, Active, Selected, and Threads tables. All feature state lives here — no globals, no scattered booleans.</div>
+        <div class="code-chip">Variables.Toggles.AutoFarm</div>
+      </div>
+      <div class="arch-block">
+        <div class="arch-label">Remote Layer</div>
+        <div class="arch-name">Remotes Table</div>
+        <div class="arch-desc">All RemoteEvent/Function references stored in a single Remotes table. pcall-wrapped on every fire. No inline remote lookups anywhere in feature code.</div>
+        <div class="code-chip">Remotes.Attack:FireServer()</div>
+      </div>
+      <div class="arch-block">
+        <div class="arch-label">Movement System</div>
+        <div class="arch-name">TweenService TP</div>
+        <div class="arch-desc">TweenSpeed slider shared across all toggles. TweenApproach helper for distances above 80–100 studs. Direct CFrame for close-range lock-on.</div>
+        <div class="code-chip">TweenApproach(target, speed)</div>
+      </div>
+      <div class="arch-block">
+        <div class="arch-label">Thread Model</div>
+        <div class="arch-name">task.spawn + Heartbeat</div>
+        <div class="arch-desc">Non-blocking spawns via task.spawn. Frame loops on RunService.Heartbeat. Thread references stored for clean cancellation — no orphaned loops.</div>
+        <div class="code-chip">Variables.Threads.Farm</div>
+      </div>
+      <div class="arch-block">
+        <div class="arch-label">Loader</div>
+        <div class="arch-name">Luarmor Isolation</div>
+        <div class="arch-desc">Strict PlaceId-based isolation. Shared utilities at top, named PlaceId variables, isIdInList checks, sequential game blocks. One URL, all games.</div>
+        <div class="code-chip">isIdInList(game.PlaceId, IDS)</div>
+      </div>
+      <div class="arch-block">
+        <div class="arch-label">UI Layer</div>
+        <div class="arch-name">Fluent UI</div>
+        <div class="arch-desc">Fluent UI with SaveManager and InterfaceManager. Obsidian UI used for BloxStrike variant. Mobile layout handled via offset/TabWidth tuning.</div>
+        <div class="code-chip">SaveManager:LoadAutoloadConfig()</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">KYO HUB</div>
+    <div class="footer-note">For educational purposes · Lua Scripting Project</div>
+    <div class="footer-copy">© 2025 Kayke · All rights reserved</div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  /* ── PARTICLES ── */
+  const pc = document.getElementById('particles');
+  for(let i=0;i<40;i++){
+    const s = document.createElement('div');
+    s.className='spark';
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${40+Math.random()*50}%;
+      --d:${3+Math.random()*5}s;
+      --delay:${Math.random()*4}s;
+      --dx:${(Math.random()-.5)*80}px;
+      --dy:${-80-Math.random()*120}px;
+    `;
+    pc.appendChild(s);
+  }
+
+  /* ── WORDS ── */
+  const words = ['Quality','Efficiency','Precision','Power','Speed','Clean Code','Reliability','Fluent UI'];
+  const streamEl = document.getElementById('word-stream');
+  const fillEl   = document.getElementById('fillTitle');
+  const progressEl = document.getElementById('progressFill');
+  const titleEl  = document.querySelector('.liquid-title');
+  const wrapEl   = document.getElementById('liquidWrap');
+  const loader   = document.getElementById('loader');
+  const app      = document.getElementById('app');
+
+  let current = 0;
+  const totalSteps = words.length;
+
+  function showWord(){
+    if(current >= totalSteps){
+      // fill complete → glow → shake → reveal
+      titleEl.classList.add('glowing');
+      setTimeout(()=>{
+        wrapEl.classList.add('pop');
+        setTimeout(()=>{
+          loader.classList.add('exit');
+          app.classList.add('visible');
+          setTimeout(()=>{ loader.style.display='none'; }, 800);
+        }, 650);
+      }, 300);
+      return;
+    }
+
+    // add tag
+    const tag = document.createElement('span');
+    tag.className='word-tag';
+    tag.textContent = words[current];
+    // keep only last 3
+    const existing = streamEl.querySelectorAll('.word-tag');
+    if(existing.length >= 3){
+      existing[0].style.transition='opacity .3s';
+      existing[0].style.opacity='0';
+      setTimeout(()=>existing[0].remove(),300);
+    }
+    streamEl.appendChild(tag);
+
+    // rise fill
+    const pct = Math.round(((current+1)/totalSteps)*100);
+    const clipTop = 100 - pct; // inset from top = 100%-pct
+    fillEl.style.transition = 'clip-path .6s cubic-bezier(.22,.61,.36,1)';
+    fillEl.style.clipPath = `inset(${clipTop}% 0% 0% 0%)`;
+
+    // progress bar
+    progressEl.style.width = pct + '%';
+
+    current++;
+    setTimeout(showWord, 520);
+  }
+
+  // start after tiny delay for fonts
+  setTimeout(showWord, 600);
+})();
+</script>
+</body>
+</html>
