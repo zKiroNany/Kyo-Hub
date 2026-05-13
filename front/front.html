@@ -2,886 +2,454 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Kyo Hub — Premium Scripts</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --purple-deep:   #1a0a2e;
-    --purple-core:   #6b21d6;
-    --purple-bright: #a855f7;
-    --purple-glow:   #c084fc;
-    --purple-mist:   #e9d5ff22;
-    --white:         #f5f0ff;
-    --off:           #c4b5fd88;
-    --bg:            #09050f;
-    --border:        #6b21d630;
-  }
+:root {
+  --p0:#09050f; --p1:#120824; --p2:#1e0d3a;
+  --pc:#6b21d6; --pb:#a855f7; --pg:#c084fc; --pe:#e9d5ff;
+  --w:#f5f0ff; --off:#c4b5fd66;
+  --border:rgba(168,85,247,0.15); --border2:rgba(168,85,247,0.08);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--p0);font-family:'Inter',sans-serif;color:var(--w);overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--p0);}
+::-webkit-scrollbar-thumb{background:var(--pc);border-radius:2px;}
+body::before{
+  content:'';position:fixed;inset:0;z-index:9000;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:.5;
+}
 
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+/* ── LOADER ── */
+#loader{
+  position:fixed;inset:0;z-index:5000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--p0);overflow:hidden;
+}
+#loader.done{animation:ldExit .85s .05s ease forwards;}
+@keyframes ldExit{0%{opacity:1;transform:scale(1);}60%{opacity:1;transform:scale(1.04);}100%{opacity:0;transform:scale(1.07);pointer-events:none;}}
+#loader::after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(107,33,214,.025) 3px,rgba(107,33,214,.025) 6px);}
+.lc{position:absolute;width:48px;height:48px;}
+.lc::before,.lc::after{content:'';position:absolute;background:rgba(168,85,247,.4);border-radius:1px;}
+.lc::before{width:2px;height:100%;}.lc::after{width:100%;height:2px;}
+.lc.tl{top:26px;left:26px;}.lc.tr{top:26px;right:26px;transform:scaleX(-1);}
+.lc.bl{bottom:26px;left:26px;transform:scaleY(-1);}.lc.br{bottom:26px;right:26px;transform:scale(-1);}
+#lparts{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.lp{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--pb);opacity:0;animation:lpF var(--d) var(--del) ease-in infinite;}
+@keyframes lpF{0%{opacity:0;transform:translate(0,0)scale(1);}25%{opacity:.7;}100%{opacity:0;transform:translate(var(--dx),var(--dy))scale(0);}}
 
-  html, body {
-    width:100%; height:100%; overflow:hidden;
-    background: var(--bg);
-    font-family: 'Syne', sans-serif;
-    color: var(--white);
-    cursor: default;
-  }
+/* adj track */
+#adj-track{position:relative;height:40px;width:min(500px,88vw);overflow:hidden;margin-bottom:18px;display:flex;align-items:center;}
+.adj-word{
+  position:absolute;right:-320px;
+  font-family:'Space Mono',monospace;font-size:clamp(9px,2.5vw,12px);
+  letter-spacing:.28em;text-transform:uppercase;color:var(--pb);white-space:nowrap;
+  opacity:0;padding:4px 14px;border:1px solid rgba(168,85,247,.38);border-radius:2px;
+  background:rgba(107,33,214,.1);box-shadow:0 0 12px rgba(107,33,214,.28);
+}
+.adj-word.travel{animation:adjT 1.05s cubic-bezier(.22,.6,.36,1) forwards;}
+.adj-word.absorb{animation:adjA .32s cubic-bezier(.55,0,1,.45) forwards;}
+@keyframes adjT{0%{right:-320px;opacity:0;transform:scale(.88);}15%{opacity:1;}85%{right:50%;transform:translateX(50%)scale(1);opacity:1;}100%{right:50%;transform:translateX(50%)scale(1);opacity:1;}}
+@keyframes adjA{0%{right:50%;transform:translateX(50%)scale(1);opacity:1;}100%{right:50%;transform:translateX(50%)scale(.1);opacity:0;}}
 
-  /* ─── NOISE OVERLAY ─── */
-  body::before {
-    content:''; position:fixed; inset:0; z-index:9999; pointer-events:none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    opacity: .45;
-  }
+/* title */
+.l-wrap{position:relative;display:inline-block;margin-bottom:22px;}
+.l-wrap.shake{animation:lShake .26s ease;}
+@keyframes lShake{0%{transform:scale(1)translateX(0);}20%{transform:scale(1.016)translateX(-3px);}40%{transform:scale(1.016)translateX(3px);}60%{transform:scale(1.016)translateX(-2px);}80%{transform:scale(1.016)translateX(2px);}100%{transform:scale(1)translateX(0);}}
+.l-wrap.pop{animation:lPop .72s ease forwards;}
+@keyframes lPop{0%{transform:scale(1);}30%{transform:scale(1.07);}55%{transform:scale(1.05)translateY(-5px);}80%{transform:scale(1.09);opacity:1;}100%{transform:scale(1.13);opacity:0;}}
+.l-base{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(60px,13vw,145px);letter-spacing:.03em;color:var(--w);position:relative;z-index:2;user-select:none;line-height:1;-webkit-text-stroke:1px rgba(200,160,255,.12);}
+.l-base.glow{text-shadow:0 0 80px rgba(168,85,247,.85),0 0 160px rgba(168,85,247,.3);transition:text-shadow .4s;}
+.l-canvas-wrap{position:absolute;inset:0;z-index:3;overflow:hidden;clip-path:inset(100% 0% 0% 0%);transition:clip-path .65s cubic-bezier(.22,.61,.36,1);}
+.l-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;}
+.l-fill{position:absolute;inset:0;font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(60px,13vw,145px);letter-spacing:.03em;line-height:1;user-select:none;background:linear-gradient(160deg,var(--pg) 0%,var(--pb) 40%,var(--pc) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;justify-content:center;white-space:nowrap;z-index:4;}
+.l-progress{width:min(250px,70vw);height:1px;background:rgba(168,85,247,.1);border-radius:99px;overflow:hidden;margin-bottom:38px;}
+.l-pfill{height:100%;width:0%;background:linear-gradient(90deg,var(--pc),var(--pg));border-radius:99px;transition:width .5s ease;box-shadow:0 0 10px var(--pb);}
+.l-footer{position:absolute;bottom:30px;font-family:'Space Mono',monospace;font-size:clamp(8px,2vw,10px);letter-spacing:.28em;text-transform:uppercase;color:rgba(196,181,253,.3);}
+.l-footer em{color:var(--pb);font-style:normal;}
 
-  /* ══════════════════════════════════════
-     LOADING SCREEN
-  ══════════════════════════════════════ */
-  #loader {
-    position:fixed; inset:0; z-index:1000;
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:center;
-    background: var(--bg);
-    transition: opacity .7s ease, transform .7s ease;
-  }
-  #loader.exit {
-    opacity:0;
-    transform: scale(1.04);
-    pointer-events:none;
-  }
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.rd1{transition-delay:.1s;}.rd2{transition-delay:.2s;}.rd3{transition-delay:.3s;}.rd4{transition-delay:.4s;}.rd5{transition-delay:.5s;}
 
-  /* scanlines on loader */
-  #loader::after {
-    content:''; position:absolute; inset:0; pointer-events:none;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent, transparent 2px,
-      rgba(107,33,214,.04) 2px, rgba(107,33,214,.04) 4px
-    );
-  }
+/* ── APP ── */
+#app{opacity:0;pointer-events:none;transition:opacity .9s ease;}
+#app.on{opacity:1;pointer-events:all;}
 
-  /* corner brackets */
-  .corner { position:absolute; width:48px; height:48px; }
-  .corner::before, .corner::after {
-    content:''; position:absolute;
-    background: var(--purple-bright);
-    border-radius: 1px;
-  }
-  .corner::before { width:2px; height:100%; }
-  .corner::after  { width:100%; height:2px; }
-  .corner.tl { top:32px; left:32px; }
-  .corner.tr { top:32px; right:32px; transform: scaleX(-1); }
-  .corner.bl { bottom:32px; left:32px; transform: scaleY(-1); }
-  .corner.br { bottom:32px; right:32px; transform: scale(-1); }
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,5vw,48px);height:62px;background:rgba(9,5,15,.82);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:19px;letter-spacing:.08em;color:var(--pb);text-shadow:0 0 20px rgba(168,85,247,.45);}
+.nav-logo span{color:var(--w);}
+.nav-links{display:flex;gap:clamp(14px,3vw,30px);list-style:none;}
+.nav-links a{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--off);text-decoration:none;transition:color .2s;font-family:'Space Mono',monospace;}
+.nav-links a:hover{color:var(--pg);}
+.nav-pill{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.15em;padding:6px 14px;border:1px solid var(--border);color:var(--pb);border-radius:99px;background:rgba(107,33,214,.1);white-space:nowrap;}
+@media(max-width:580px){.nav-links{display:none;}}
 
-  /* ── LIQUID TEXT WRAPPER ── */
-  .liquid-wrap {
-    position:relative;
-    display:inline-block;
-    margin-bottom:12px;
-  }
+/* ── HERO ── */
+.hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px clamp(18px,6vw,60px) 60px;position:relative;overflow:hidden;text-align:center;}
+.hero-orb{position:absolute;pointer-events:none;border-radius:50%;filter:blur(90px);}
+.hero-orb.a{width:min(580px,90vw);height:min(580px,90vw);background:radial-gradient(circle,rgba(107,33,214,.17),transparent 70%);top:-12%;left:50%;transform:translateX(-50%);}
+.hero-orb.b{width:260px;height:260px;background:radial-gradient(circle,rgba(168,85,247,.1),transparent 70%);bottom:8%;right:-4%;}
+.hero-orb.c{width:180px;height:180px;background:radial-gradient(circle,rgba(192,132,252,.07),transparent 70%);top:20%;left:3%;}
+.hero-eye{font-family:'Space Mono',monospace;font-size:clamp(9px,2vw,11px);letter-spacing:.4em;text-transform:uppercase;color:var(--pb);margin-bottom:18px;position:relative;z-index:1;}
+.hero-h1{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(52px,12vw,150px);line-height:.94;letter-spacing:.02em;color:var(--w);position:relative;z-index:1;}
+.hero-h1 .acc{color:var(--pb);}
+.hero-p{max-width:480px;margin:22px auto 0;font-size:clamp(13px,2vw,15px);line-height:1.8;color:var(--off);position:relative;z-index:1;}
+.hero-cta{display:flex;gap:11px;margin-top:42px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1;}
+.btn-p{padding:clamp(11px,2vw,13px) clamp(22px,4vw,36px);background:linear-gradient(135deg,var(--pc),var(--pb));color:var(--w);border:none;border-radius:4px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;text-decoration:none;box-shadow:0 0 38px rgba(107,33,214,.42);transition:box-shadow .2s,transform .2s;display:inline-block;}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 0 58px rgba(107,33,214,.62);}
+.btn-g{padding:clamp(11px,2vw,13px) clamp(22px,4vw,36px);background:transparent;border:1px solid rgba(168,85,247,.45);color:var(--pg);border-radius:4px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:background .2s,transform .2s;display:inline-block;}
+.btn-g:hover{background:rgba(107,33,214,.12);transform:translateY(-2px);}
 
-  /* base text – always white, bold */
-  .liquid-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(72px, 12vw, 130px);
-    letter-spacing: 0.06em;
-    color: var(--white);
-    position:relative;
-    z-index:2;
-    user-select:none;
-    line-height:1;
-    -webkit-text-stroke: 1px rgba(200,160,255,0.3);
-  }
+/* ── MARQUEE ── */
+.marquee-strip{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(26,10,46,.25);padding:13px 0;}
+.marquee-inner{display:flex;gap:36px;width:max-content;animation:marq 24s linear infinite;}
+@keyframes marq{to{transform:translateX(-50%);}}
+.mi{display:flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:rgba(196,181,253,.3);white-space:nowrap;}
+.mi .dot{width:3px;height:3px;border-radius:50%;background:var(--pb);flex-shrink:0;}
 
-  /* the purple liquid – clip rises from bottom */
-  .liquid-title .fill {
-    position:absolute; inset:0;
-    color: var(--purple-bright);
-    background: linear-gradient(
-      to bottom,
-      var(--purple-glow) 0%,
-      var(--purple-core) 60%,
-      var(--purple-deep) 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    /* clip-path rises: start fully clipped (bottom), rise to top */
-    clip-path: inset(100% 0% 0% 0%);
-    transition: clip-path 0s;
-    z-index:3;
-    pointer-events:none;
-  }
+/* ── STATS ── */
+.stats-sec{padding:80px clamp(18px,6vw,60px);}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;max-width:860px;margin:0 auto;}
+@media(min-width:600px){.stats-grid{grid-template-columns:repeat(4,1fr);}}
+.sc{background:rgba(26,10,46,.38);border:1px solid var(--border2);padding:clamp(26px,5vw,42px) clamp(14px,3vw,26px);text-align:center;position:relative;overflow:hidden;transition:background .25s,border-color .25s;}
+.sc::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% -20%,rgba(107,33,214,.14),transparent);opacity:0;transition:opacity .3s;}
+.sc:hover{background:rgba(107,33,214,.09);border-color:rgba(168,85,247,.28);}.sc:hover::before{opacity:1;}
+.snum{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(38px,8vw,62px);line-height:1;background:linear-gradient(135deg,var(--pg),var(--pb));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.slbl{font-family:'Space Mono',monospace;font-size:clamp(8px,1.5vw,9px);letter-spacing:.2em;text-transform:uppercase;color:var(--off);margin-top:5px;}
 
-  /* animated glow pulse on title */
-  .liquid-title {
-    text-shadow:
-      0 0 80px rgba(168,85,247,0),
-      0 0 0px rgba(168,85,247,0);
-    transition: text-shadow .4s ease;
-  }
-  .liquid-title.glowing {
-    text-shadow:
-      0 0 60px rgba(168,85,247,.9),
-      0 0 120px rgba(168,85,247,.4);
-  }
+/* ── FEATURES ── */
+.feat-sec{padding:100px clamp(18px,6vw,60px);max-width:1180px;margin:0 auto;}
+.sec-eye{font-family:'Space Mono',monospace;font-size:clamp(9px,2vw,11px);letter-spacing:.38em;text-transform:uppercase;color:var(--pb);margin-bottom:14px;}
+.sec-h{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(30px,6vw,66px);line-height:1;color:var(--w);margin-bottom:13px;}
+.sec-h .dim{color:rgba(196,181,253,.32);}
+.sec-p{font-size:clamp(13px,2vw,15px);line-height:1.8;color:var(--off);max-width:500px;}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:1px;margin-top:58px;border:1px solid var(--border2);background:var(--border2);}
+.fc{background:var(--p0);padding:clamp(22px,4vw,34px) clamp(18px,3vw,30px);transition:background .25s;position:relative;overflow:hidden;}
+.fc::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--pc),transparent);transform:scaleX(0);transition:transform .3s;}
+.fc:hover{background:rgba(107,33,214,.07);}.fc:hover::after{transform:scaleX(1);}
+.fn{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.2em;color:rgba(168,85,247,.25);margin-bottom:14px;}
+.ft{font-family:'Montserrat',sans-serif;font-weight:700;font-size:clamp(14px,2.5vw,17px);color:var(--w);margin-bottom:9px;}
+.fd{font-size:clamp(12px,1.8vw,13px);line-height:1.75;color:var(--off);}
+.fb{display:inline-block;margin-top:14px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;padding:3px 10px;border:1px solid rgba(168,85,247,.22);color:var(--pb);border-radius:99px;background:rgba(107,33,214,.09);}
 
-  /* shake + expand before exit */
-  @keyframes shakePop {
-    0%   { transform: scale(1) translateX(0); }
-    10%  { transform: scale(1.02) translateX(-4px); }
-    20%  { transform: scale(1.02) translateX(4px); }
-    30%  { transform: scale(1.02) translateX(-3px); }
-    40%  { transform: scale(1.02) translateX(3px); }
-    55%  { transform: scale(1.08) translateX(0); }
-    70%  { transform: scale(1.05) translateX(0); }
-    100% { transform: scale(1.1) translateX(0); opacity:0; }
-  }
-  .liquid-wrap.pop { animation: shakePop .7s ease forwards; }
+/* ── GAMES ── */
+.games-sec{padding:100px clamp(18px,6vw,60px);background:linear-gradient(180deg,transparent,rgba(26,10,46,.2),transparent);}
+.games-inner{max-width:1080px;margin:0 auto;}
+.games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,2vw,14px);margin-top:58px;}
+@media(max-width:680px){.games-grid{grid-template-columns:1fr;}}
+@media(min-width:681px) and (max-width:860px){.games-grid{grid-template-columns:repeat(2,1fr);}}
+.gc{background:linear-gradient(145deg,rgba(26,10,46,.65),rgba(9,5,15,.88));border:1px solid var(--border);border-radius:6px;padding:clamp(18px,3vw,26px);position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;}
+.gc:hover{transform:translateY(-4px);border-color:rgba(168,85,247,.38);box-shadow:0 10px 44px rgba(107,33,214,.18);}
+.gc-orb{position:absolute;top:-28px;right:-28px;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.18),transparent 70%);pointer-events:none;}
+.gc-dot{position:absolute;top:16px;right:16px;width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 7px #4ade80;animation:pdot 2s ease infinite;}
+@keyframes pdot{0%,100%{box-shadow:0 0 5px #4ade80;}50%{box-shadow:0 0 13px #4ade80;}}
+.gc-name{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(14px,2.5vw,18px);color:var(--w);margin-bottom:3px;}
+.gc-cnt{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--pb);margin-bottom:12px;}
+.gc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;}
+.gtag{font-size:9px;font-family:'Space Mono',monospace;letter-spacing:.07em;padding:3px 7px;background:rgba(107,33,214,.13);color:rgba(196,181,253,.45);border:1px solid var(--border2);border-radius:2px;}
+.gc-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;padding:7px 14px;background:transparent;border:1px solid rgba(168,85,247,.28);color:var(--pb);border-radius:3px;cursor:pointer;transition:background .2s,border-color .2s;width:100%;}
+.gc-btn:hover{background:rgba(107,33,214,.13);border-color:rgba(168,85,247,.48);}
 
-  /* ── WORDS STREAM ── */
-  #word-stream {
-    height:28px;
-    display:flex; align-items:center; gap:10px;
-    margin-bottom:40px;
-    min-width:300px;
-    justify-content:center;
-  }
-  .word-tag {
-    font-family:'Space Mono', monospace;
-    font-size:11px;
-    letter-spacing:.15em;
-    text-transform:uppercase;
-    padding: 3px 10px;
-    border: 1px solid var(--purple-bright);
-    color: var(--purple-bright);
-    border-radius:2px;
-    opacity:0;
-    transform: translateY(8px) scale(.9);
-    animation: tagIn .35s ease forwards;
-    background: rgba(107,33,214,.15);
-    box-shadow: 0 0 12px rgba(107,33,214,.4);
-  }
-  @keyframes tagIn {
-    to { opacity:1; transform: translateY(0) scale(1); }
-  }
+/* ── ABOUT ── */
+.about-sec{padding:100px clamp(18px,6vw,60px);max-width:1060px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+@media(max-width:680px){.about-sec{grid-template-columns:1fr;gap:36px;}}
+.ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border:1px solid var(--border2);}
+.ab-cell{padding:clamp(14px,3vw,22px);background:rgba(26,10,46,.28);transition:background .2s;}
+.ab-cell:hover{background:rgba(107,33,214,.07);}
+.ab-icon{font-size:20px;margin-bottom:7px;}
+.ab-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--pb);margin-bottom:3px;}
+.ab-val{font-family:'Montserrat',sans-serif;font-weight:700;font-size:clamp(12px,2vw,14px);color:var(--w);}
 
-  /* ── PROGRESS BAR ── */
-  .progress-track {
-    width:280px; height:2px;
-    background: rgba(168,85,247,.15);
-    border-radius:99px;
-    overflow:hidden;
-    margin-bottom:36px;
-  }
-  .progress-fill {
-    height:100%;
-    width:0%;
-    background: linear-gradient(90deg, var(--purple-core), var(--purple-glow));
-    border-radius:99px;
-    transition: width .4s ease;
-    box-shadow: 0 0 12px var(--purple-bright);
-  }
+/* ── MODAL ── */
+#modal-ov{position:fixed;inset:0;z-index:4000;background:rgba(9,5,15,.88);backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none;transition:opacity .25s;}
+#modal-ov.open{opacity:1;pointer-events:all;}
+.modal-box{background:var(--p1);border:1px solid rgba(168,85,247,.28);border-radius:8px;padding:clamp(22px,4vw,38px);width:min(460px,100%);position:relative;transform:translateY(14px);transition:transform .25s;box-shadow:0 0 80px rgba(107,33,214,.28);}
+#modal-ov.open .modal-box{transform:translateY(0);}
+.modal-x{position:absolute;top:14px;right:14px;width:30px;height:30px;background:rgba(107,33,214,.12);border:1px solid var(--border);border-radius:4px;color:var(--pg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;line-height:1;transition:background .2s;}
+.modal-x:hover{background:rgba(107,33,214,.28);}
+.modal-game{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--pb);margin-bottom:7px;}
+.modal-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(18px,4vw,26px);color:var(--w);margin-bottom:18px;}
+.modal-feats{display:flex;flex-direction:column;gap:7px;margin-bottom:22px;}
+.mf{display:flex;align-items:center;gap:9px;padding:9px 13px;background:rgba(107,33,214,.07);border:1px solid var(--border2);border-radius:4px;}
+.mf-dot{width:5px;height:5px;border-radius:50%;background:var(--pb);flex-shrink:0;}
+.mf-text{font-size:clamp(11px,2vw,13px);color:rgba(196,181,253,.65);}
+.modal-note{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.1em;color:rgba(196,181,253,.22);text-align:center;}
 
-  /* ── FOOTER LABEL ── */
-  .loader-footer {
-    position:absolute; bottom:40px;
-    font-family:'Space Mono',monospace;
-    font-size:11px;
-    letter-spacing:.35em;
-    text-transform:uppercase;
-    color: var(--off);
-  }
-  .loader-footer span {
-    color: var(--purple-bright);
-  }
-
-  /* ── PARTICLES ── */
-  #particles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
-  .spark {
-    position:absolute;
-    width:2px; height:2px;
-    border-radius:50%;
-    background:var(--purple-bright);
-    opacity:0;
-    animation: sparkFloat var(--d,4s) var(--delay,0s) ease-in infinite;
-  }
-  @keyframes sparkFloat {
-    0%   { opacity:0; transform: translate(0,0) scale(1); }
-    20%  { opacity:.8; }
-    100% { opacity:0; transform: translate(var(--dx,20px), var(--dy,-120px)) scale(0); }
-  }
-
-  /* ══════════════════════════════════════
-     MAIN SITE (hidden until load done)
-  ══════════════════════════════════════ */
-  #app {
-    position:fixed; inset:0; z-index:1;
-    opacity:0; pointer-events:none;
-    transition: opacity .9s ease .1s;
-    overflow-y:auto;
-    scroll-behavior:smooth;
-  }
-  #app.visible { opacity:1; pointer-events:all; }
-
-  /* ─── NAV ─── */
-  nav {
-    position:sticky; top:0; z-index:100;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 40px;
-    background: rgba(9,5,15,.75);
-    backdrop-filter: blur(20px) saturate(1.4);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-logo {
-    font-family:'Bebas Neue',sans-serif;
-    font-size:26px; letter-spacing:.1em;
-    color: var(--purple-bright);
-    text-shadow: 0 0 20px rgba(168,85,247,.6);
-  }
-  .nav-logo span { color:var(--white); }
-  .nav-links {
-    display:flex; gap:32px; list-style:none;
-  }
-  .nav-links a {
-    font-size:12px; letter-spacing:.2em; text-transform:uppercase;
-    color:var(--off); text-decoration:none;
-    transition: color .2s;
-  }
-  .nav-links a:hover { color:var(--purple-glow); }
-  .nav-badge {
-    font-family:'Space Mono',monospace;
-    font-size:10px; letter-spacing:.15em;
-    padding:5px 14px;
-    border:1px solid var(--purple-bright);
-    color:var(--purple-bright);
-    border-radius:2px;
-    background: rgba(107,33,214,.12);
-  }
-
-  /* ─── HERO ─── */
-  .hero {
-    min-height:90vh;
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:center;
-    padding:80px 40px;
-    position:relative; overflow:hidden;
-    text-align:center;
-  }
-  .hero-bg {
-    position:absolute; inset:0; z-index:0;
-    background:
-      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(107,33,214,.22) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 50% at 20% 80%, rgba(168,85,247,.1) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 40% at 80% 10%, rgba(192,132,252,.08) 0%, transparent 60%);
-  }
-  .hero-eyebrow {
-    font-family:'Space Mono',monospace;
-    font-size:11px; letter-spacing:.4em; text-transform:uppercase;
-    color:var(--purple-bright); margin-bottom:20px;
-    opacity:0; transform:translateY(20px);
-    animation: fadeUp .6s .2s ease forwards;
-  }
-  .hero-title {
-    font-family:'Bebas Neue',sans-serif;
-    font-size: clamp(64px, 11vw, 160px);
-    line-height:.95; letter-spacing:.04em;
-    color:var(--white);
-    position:relative; z-index:1;
-    opacity:0; transform:translateY(30px);
-    animation: fadeUp .7s .35s ease forwards;
-  }
-  .hero-title .accent { color:var(--purple-bright); }
-  .hero-sub {
-    max-width:560px; margin: 24px auto 0;
-    font-size:15px; line-height:1.7;
-    color:var(--off);
-    opacity:0; transform:translateY(20px);
-    animation: fadeUp .6s .55s ease forwards;
-  }
-  .hero-cta {
-    display:flex; gap:14px; margin-top:48px;
-    opacity:0; transform:translateY(20px);
-    animation: fadeUp .6s .7s ease forwards;
-    flex-wrap:wrap; justify-content:center;
-  }
-  .btn-primary {
-    padding:14px 36px;
-    background: linear-gradient(135deg, var(--purple-core), var(--purple-bright));
-    color:var(--white); border:none; border-radius:3px;
-    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.15em;
-    text-transform:uppercase; cursor:pointer; text-decoration:none;
-    box-shadow: 0 0 40px rgba(107,33,214,.5);
-    transition: box-shadow .2s, transform .2s;
-  }
-  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 60px rgba(107,33,214,.7); }
-  .btn-ghost {
-    padding:14px 36px;
-    background:transparent;
-    border:1px solid var(--purple-bright); color:var(--purple-glow);
-    border-radius:3px; font-family:'Space Mono',monospace; font-size:12px;
-    letter-spacing:.15em; text-transform:uppercase; cursor:pointer; text-decoration:none;
-    transition: background .2s, transform .2s;
-  }
-  .btn-ghost:hover { background:rgba(107,33,214,.15); transform:translateY(-2px); }
-
-  @keyframes fadeUp {
-    to { opacity:1; transform:translateY(0); }
-  }
-
-  /* ─── STATS STRIP ─── */
-  .stats-strip {
-    border-top:1px solid var(--border);
-    border-bottom:1px solid var(--border);
-    display:flex; flex-wrap:wrap;
-    background:rgba(26,10,46,.4);
-  }
-  .stat-item {
-    flex:1; min-width:160px;
-    padding:36px 32px;
-    text-align:center;
-    border-right:1px solid var(--border);
-    transition: background .2s;
-  }
-  .stat-item:last-child { border-right:none; }
-  .stat-item:hover { background:rgba(107,33,214,.08); }
-  .stat-num {
-    font-family:'Bebas Neue',sans-serif;
-    font-size:52px; line-height:1;
-    color:var(--purple-bright);
-    text-shadow: 0 0 30px rgba(168,85,247,.5);
-  }
-  .stat-label {
-    font-size:11px; letter-spacing:.2em; text-transform:uppercase;
-    color:var(--off); margin-top:4px;
-    font-family:'Space Mono',monospace;
-  }
-
-  /* ─── SECTION ─── */
-  section { padding:100px 40px; max-width:1200px; margin:0 auto; }
-  .section-eyebrow {
-    font-family:'Space Mono',monospace;
-    font-size:10px; letter-spacing:.4em; text-transform:uppercase;
-    color:var(--purple-bright); margin-bottom:14px;
-  }
-  .section-title {
-    font-family:'Bebas Neue',sans-serif;
-    font-size:clamp(36px,5vw,64px);
-    color:var(--white); line-height:1.05; margin-bottom:16px;
-  }
-  .section-title .dim { color:var(--off); }
-  .section-desc {
-    font-size:15px; line-height:1.75; color:var(--off);
-    max-width:580px;
-  }
-
-  /* ─── FEATURES GRID ─── */
-  .features-grid {
-    display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap:2px; margin-top:64px;
-    border:2px solid var(--border);
-  }
-  .feat-card {
-    padding:36px 32px;
-    background:rgba(26,10,46,.35);
-    border:1px solid transparent;
-    transition: background .25s, border-color .25s, transform .25s;
-    position:relative; overflow:hidden;
-  }
-  .feat-card::before {
-    content:''; position:absolute; top:0; left:0;
-    width:100%; height:2px;
-    background: linear-gradient(90deg, transparent, var(--purple-core), transparent);
-    opacity:0; transition: opacity .25s;
-  }
-  .feat-card:hover { background:rgba(107,33,214,.12); border-color:var(--border); transform:translateY(-2px); }
-  .feat-card:hover::before { opacity:1; }
-  .feat-icon {
-    width:40px; height:40px; margin-bottom:20px;
-    display:flex; align-items:center; justify-content:center;
-    border:1px solid var(--border);
-    border-radius:6px; background:rgba(107,33,214,.15);
-    font-size:18px;
-  }
-  .feat-title {
-    font-family:'Syne',sans-serif; font-weight:700;
-    font-size:16px; color:var(--white); margin-bottom:8px;
-  }
-  .feat-desc { font-size:13px; line-height:1.7; color:var(--off); }
-  .feat-tag {
-    display:inline-block; margin-top:14px;
-    font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.2em;
-    text-transform:uppercase; padding:3px 8px;
-    border:1px solid rgba(168,85,247,.3); color:var(--purple-bright);
-    border-radius:2px;
-  }
-
-  /* ─── GAMES SECTION ─── */
-  .games-grid {
-    display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
-    gap:16px; margin-top:56px;
-  }
-  .game-card {
-    padding:28px 24px;
-    border:1px solid var(--border);
-    border-radius:4px;
-    background: linear-gradient(135deg, rgba(26,10,46,.6), rgba(9,5,15,.8));
-    position:relative; overflow:hidden;
-    transition:transform .2s, border-color .2s, box-shadow .2s;
-    cursor:default;
-  }
-  .game-card:hover {
-    transform:translateY(-4px);
-    border-color:rgba(168,85,247,.5);
-    box-shadow:0 8px 40px rgba(107,33,214,.25);
-  }
-  .game-card-glow {
-    position:absolute; top:-40px; right:-40px;
-    width:100px; height:100px; border-radius:50%;
-    background: radial-gradient(circle, rgba(168,85,247,.25), transparent 70%);
-    pointer-events:none;
-  }
-  .game-name {
-    font-family:'Syne',sans-serif; font-weight:800;
-    font-size:17px; color:var(--white); margin-bottom:6px;
-  }
-  .game-count {
-    font-family:'Space Mono',monospace; font-size:10px;
-    letter-spacing:.2em; text-transform:uppercase; color:var(--purple-bright);
-    margin-bottom:12px;
-  }
-  .game-tags { display:flex; flex-wrap:wrap; gap:5px; }
-  .gtag {
-    font-size:9px; font-family:'Space Mono',monospace;
-    letter-spacing:.1em; padding:2px 7px;
-    background:rgba(107,33,214,.18); color:var(--off);
-    border:1px solid var(--border); border-radius:2px;
-  }
-  .game-status {
-    position:absolute; top:16px; right:16px;
-    width:7px; height:7px; border-radius:50%;
-    background:#4ade80;
-    box-shadow:0 0 10px #4ade80;
-    animation: pulse-dot 2s ease-in-out infinite;
-  }
-  @keyframes pulse-dot {
-    0%,100%{box-shadow:0 0 6px #4ade80;} 50%{box-shadow:0 0 16px #4ade80;}
-  }
-
-  /* ─── ARCHITECTURE ─── */
-  .arch-grid {
-    display:grid; grid-template-columns:1fr 1fr; gap:2px;
-    margin-top:64px; border:2px solid var(--border);
-  }
-  @media(max-width:700px){ .arch-grid { grid-template-columns:1fr; } }
-  .arch-block {
-    padding:40px 36px;
-    background:rgba(26,10,46,.3);
-    border:1px solid transparent;
-  }
-  .arch-block:hover { background:rgba(107,33,214,.08); }
-  .arch-label {
-    font-family:'Space Mono',monospace; font-size:9px;
-    letter-spacing:.3em; text-transform:uppercase;
-    color:var(--purple-bright); margin-bottom:12px;
-  }
-  .arch-name {
-    font-family:'Bebas Neue',sans-serif; font-size:28px;
-    color:var(--white); letter-spacing:.06em; margin-bottom:10px;
-  }
-  .arch-desc { font-size:13px; line-height:1.75; color:var(--off); }
-  .code-chip {
-    display:inline-block; margin-top:16px;
-    font-family:'Space Mono',monospace; font-size:11px;
-    padding:8px 14px;
-    background:rgba(9,5,15,.8); border:1px solid var(--border);
-    border-radius:3px; color:var(--purple-glow);
-  }
-
-  /* ─── FOOTER ─── */
-  footer {
-    border-top:1px solid var(--border);
-    padding:48px 40px;
-    display:flex; align-items:center; justify-content:space-between;
-    flex-wrap:wrap; gap:20px;
-    background:rgba(9,5,15,.95);
-  }
-  .footer-logo {
-    font-family:'Bebas Neue',sans-serif; font-size:22px;
-    letter-spacing:.12em; color:var(--purple-bright);
-  }
-  .footer-note {
-    font-family:'Space Mono',monospace; font-size:10px;
-    letter-spacing:.15em; color:var(--off); text-align:center;
-  }
-  .footer-copy {
-    font-family:'Space Mono',monospace; font-size:10px;
-    color:rgba(196,181,253,.3); letter-spacing:.1em;
-  }
-
-  /* ─── SCROLLBAR ─── */
-  ::-webkit-scrollbar { width:4px; }
-  ::-webkit-scrollbar-track { background:var(--bg); }
-  ::-webkit-scrollbar-thumb { background:var(--purple-core); border-radius:2px; }
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:clamp(28px,5vw,48px) clamp(18px,6vw,60px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;background:rgba(9,5,15,.97);}
+.f-logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(15px,3vw,20px);letter-spacing:.06em;color:var(--pb);}
+.f-note{font-family:'Space Mono',monospace;font-size:clamp(7px,1.5vw,9px);letter-spacing:.13em;color:rgba(196,181,253,.18);text-align:center;}
 </style>
 </head>
 <body>
 
-<!-- ══════════════ LOADER ══════════════ -->
+<!-- LOADER -->
 <div id="loader">
-  <div id="particles"></div>
-
-  <!-- corners -->
-  <div class="corner tl"></div>
-  <div class="corner tr"></div>
-  <div class="corner bl"></div>
-  <div class="corner br"></div>
-
-  <!-- word stream -->
-  <div id="word-stream"></div>
-
-  <!-- liquid title -->
-  <div class="liquid-wrap" id="liquidWrap">
-    <div class="liquid-title" id="baseTitle">
-      KYO HUB
-      <span class="fill" id="fillTitle">KYO HUB</span>
+  <div id="lparts"></div>
+  <div class="lc tl"></div><div class="lc tr"></div><div class="lc bl"></div><div class="lc br"></div>
+  <div id="adj-track"><span class="adj-word" id="adjW"></span></div>
+  <div class="l-wrap" id="lWrap">
+    <div class="l-base" id="lBase">KYO HUB</div>
+    <div class="l-canvas-wrap" id="lCW">
+      <canvas id="wc"></canvas>
+      <div class="l-fill">KYO HUB</div>
     </div>
   </div>
+  <div class="l-progress"><div class="l-pfill" id="lPF"></div></div>
+  <div class="l-footer"><em>Premium Scripts</em> &nbsp;·&nbsp; Multi-Game Hub &nbsp;·&nbsp; Lua Automation</div>
+</div>
 
-  <!-- progress bar -->
-  <div class="progress-track">
-    <div class="progress-fill" id="progressFill"></div>
-  </div>
-
-  <!-- footer -->
-  <div class="loader-footer">
-    <span>Premium Scripts</span> · Lua Automation · Multi-Game Hub
+<!-- MODAL -->
+<div id="modal-ov">
+  <div class="modal-box">
+    <button class="modal-x" id="mClose">×</button>
+    <div class="modal-game" id="mGame"></div>
+    <div class="modal-title">Feature List</div>
+    <div class="modal-feats" id="mFeats"></div>
+    <div class="modal-note">More features coming soon — stay tuned.</div>
   </div>
 </div>
 
-<!-- ══════════════ MAIN SITE ══════════════ -->
+<!-- APP -->
 <div id="app">
-
-  <!-- NAV -->
   <nav>
     <div class="nav-logo">KYO<span> HUB</span></div>
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
       <li><a href="#games">Games</a></li>
-      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#about">About</a></li>
     </ul>
-    <div class="nav-badge">v2.0 Stable</div>
+    <div class="nav-pill">v2.0 &nbsp;·&nbsp; Active</div>
   </nav>
 
   <!-- HERO -->
   <div class="hero">
-    <div class="hero-bg"></div>
-    <p class="hero-eyebrow">Multi-Game Lua Script Hub</p>
-    <h1 class="hero-title">KYO<br><span class="accent">HUB</span></h1>
-    <p class="hero-sub">
-      A feature-rich automation hub targeting multiple Roblox games. Built around Fluent UI with a unified architecture, smart teleport engines, and deep per-game integration.
-    </p>
-    <div class="hero-cta">
-      <a href="https://github.com" class="btn-primary">View on GitHub</a>
-      <a href="#features" class="btn-ghost">Explore Features</a>
+    <div class="hero-orb a"></div><div class="hero-orb b"></div><div class="hero-orb c"></div>
+    <p class="hero-eye reveal">Roblox Script Hub</p>
+    <h1 class="hero-h1 reveal rd1">KYO<br><span class="acc">HUB</span></h1>
+    <p class="hero-p reveal rd2">A free, premium-grade multi-game hub. Built fast, kept clean, updated constantly. One script, every game.</p>
+    <div class="hero-cta reveal rd3">
+      <a href="https://github.com/zKiroNany/Kyo-Hub" class="btn-p" target="_blank">Get on GitHub</a>
+      <a href="#games" class="btn-g">View Games</a>
     </div>
   </div>
 
+  <!-- MARQUEE -->
+  <div class="marquee-strip"><div class="marquee-inner" id="marqI"></div></div>
+
   <!-- STATS -->
-  <div class="stats-strip">
-    <div class="stat-item"><div class="stat-num">7+</div><div class="stat-label">Games Supported</div></div>
-    <div class="stat-item"><div class="stat-num">60+</div><div class="stat-label">Automation Features</div></div>
-    <div class="stat-item"><div class="stat-num">1</div><div class="stat-label">Unified Loader</div></div>
-    <div class="stat-item"><div class="stat-num">∞</div><div class="stat-label">Community Driven</div></div>
+  <div class="stats-sec">
+    <div class="stats-grid">
+      <div class="sc reveal"><div class="snum" data-count="7">0</div><div class="slbl">Games Supported</div></div>
+      <div class="sc reveal rd1"><div class="snum" data-count="60">0</div><div class="slbl">Automation Features</div></div>
+      <div class="sc reveal rd2"><div class="snum">100%</div><div class="slbl">Free Forever</div></div>
+      <div class="sc reveal rd3"><div class="snum">∞</div><div class="slbl">Community Driven</div></div>
+    </div>
   </div>
 
   <!-- FEATURES -->
   <section id="features">
-    <p class="section-eyebrow">// capabilities</p>
-    <h2 class="section-title">Built to <span class="dim">Automate</span><br>Everything</h2>
-    <p class="section-desc">
-      Kyo Hub is engineered for reliability. Every feature shares a unified state system — no conflicting loops, no leaked threads.
-    </p>
-
-    <div class="features-grid">
-      <div class="feat-card">
-        <div class="feat-icon">⚡</div>
-        <div class="feat-title">Heartbeat Farm Engine</div>
-        <div class="feat-desc">Generic FarmTarget loop powered by RunService.Heartbeat. Smart teleport with retry logic, tween-based movement for distances over 80 studs to avoid server rubberbanding.</div>
-        <span class="feat-tag">Core System</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🎯</div>
-        <div class="feat-title">Silent Aim</div>
-        <div class="feat-desc">UIS.InputBegan + temporary Camera.CFrame swap via CFrame.lookAt. Unified toggle for both click and hold modes. Triggerbot keybind included.</div>
-        <span class="feat-tag">Combat</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🔮</div>
-        <div class="feat-title">Priority System</div>
-        <div class="feat-desc">Three-level boss/mob/none priority dropdowns. Unified EntityTP table replaces separate lookup structures. Dynamic target switching mid-farm.</div>
-        <span class="feat-tag">Automation</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🔔</div>
-        <div class="feat-title">Discord Webhooks</div>
-        <div class="feat-desc">Rich embed notifications with event-type color coding. Deduplication logic for gold skins and loot events. Stored stands list for Stands Upright alerts.</div>
-        <span class="feat-tag">Notifications</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🎰</div>
-        <div class="feat-title">Auto Roll System</div>
-        <div class="feat-desc">Four exclusive roll modes with alias support. Slot-aware stand storage via SwitchStand remote. Webhook embed on rare pulls.</div>
-        <span class="feat-tag">Gacha</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🌐</div>
-        <div class="feat-title">PlaceHopper</div>
-        <div class="feat-desc">Cross-server teleport utility with teleport token error handling. PlaceId-aware configuration. Automatic retry on failure with configurable delay.</div>
-        <span class="feat-tag">Utility</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🛡️</div>
-        <div class="feat-title">No Spread / No Recoil</div>
-        <div class="feat-desc">rawset on module tables bypasses anti-cheat hooks. Targets the Bullet module in ReplicatedStorage.Components without triggering hookfunction detections.</div>
-        <span class="feat-tag">BloxStrike</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📡</div>
-        <div class="feat-title">ESP & Visuals</div>
-        <div class="feat-desc">Drawing API double-box ESP with HP bars, name/distance/weapon labels, tracers, Chams with KyoCham deduplication, and mine/trap ESP with pulsing highlight effects.</div>
-        <span class="feat-tag">Visuals</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">⚙️</div>
-        <div class="feat-title">SaveManager Integration</div>
-        <div class="feat-desc">Full Fluent UI SaveManager + InterfaceManager integration. Config profiles persist across sessions. Clean separation between per-game and shared settings.</div>
-        <span class="feat-tag">Config</span>
+    <div class="feat-sec">
+      <p class="sec-eye reveal">// why kyo hub</p>
+      <h2 class="sec-h reveal rd1">Built to be<br><span class="dim">Different</span></h2>
+      <p class="sec-p reveal rd2">Not just another script. Kyo Hub is engineered to be fast, stable, and invisible — doing exactly what you need without getting in the way.</p>
+      <div class="feat-grid">
+        <div class="fc reveal"><div class="fn">01</div><div class="ft">Blazing Fast</div><div class="fd">Frame-perfect execution on every feature. Zero lag on low-end devices. Optimized loops that respect your FPS and never throttle your game.</div><span class="fb">Performance</span></div>
+        <div class="fc reveal rd1"><div class="fn">02</div><div class="ft">Always Free</div><div class="fd">No keys. No paywalls. No premium tiers. Every feature — from basic automation to advanced combat tools — is available to everyone, forever.</div><span class="fb">Access</span></div>
+        <div class="fc reveal rd2"><div class="fn">03</div><div class="ft">Rock Solid Stability</div><div class="fd">Engineered with error isolation. If one feature breaks, nothing else goes down. Smart recovery keeps your session running no matter what.</div><span class="fb">Reliability</span></div>
+        <div class="fc reveal rd3"><div class="fn">04</div><div class="ft">Multi-Game Ready</div><div class="fd">One loader, seven games and growing. Each game module is fully isolated — updates to one never break another. Switch games, same hub.</div><span class="fb">Versatility</span></div>
+        <div class="fc reveal rd4"><div class="fn">05</div><div class="ft">Deep Automation</div><div class="fd">From farming and grinding to rolling and collecting — every repetitive task is handled automatically, so you can focus on what actually matters.</div><span class="fb">Automation</span></div>
+        <div class="fc reveal rd5"><div class="fn">06</div><div class="ft">Clean UI</div><div class="fd">A polished, organized interface with save profiles, config persistence, and mobile support. Looks premium. Feels premium. Costs nothing.</div><span class="fb">Design</span></div>
+        <div class="fc reveal"><div class="fn">07</div><div class="ft">Instant Notifications</div><div class="fd">Discord webhook integration with rich embeds. Get pinged when rare items drop, rolls land, or farming targets complete — in real time.</div><span class="fb">Alerts</span></div>
+        <div class="fc reveal rd1"><div class="fn">08</div><div class="ft">Actively Updated</div><div class="fd">Game updates don't leave you stranded. Kyo Hub is maintained by an active developer and patched regularly after every major game update.</div><span class="fb">Maintenance</span></div>
+        <div class="fc reveal rd2"><div class="fn">09</div><div class="ft">Combat Ready</div><div class="fd">Advanced targeting, aim assistance, and mobility features for competitive games. Tunable, toggleable, and built to be smooth — not janky.</div><span class="fb">Combat</span></div>
       </div>
     </div>
   </section>
 
   <!-- GAMES -->
-  <section id="games" style="background:rgba(26,10,46,.15); max-width:100%; padding:80px 40px;">
-    <div style="max-width:1200px;margin:0 auto;">
-      <p class="section-eyebrow">// supported games</p>
-      <h2 class="section-title">One Hub.<br><span class="dim">Every Game.</span></h2>
-      <p class="section-desc">Each game module is isolated by PlaceId in the unified Luarmor loader. Shared utilities live at the top; game logic never bleeds across modules.</p>
-
-      <div class="games-grid">
-        <div class="game-card">
-          <div class="game-card-glow"></div>
-          <div class="game-status"></div>
-          <div class="game-name">Sailor Piece</div>
-          <div class="game-count">15+ Features</div>
-          <div class="game-tags">
-            <span class="gtag">Auto Boss</span>
-            <span class="gtag">Auto Grind</span>
-            <span class="gtag">Pity Farm</span>
-            <span class="gtag">NPC TP</span>
-            <span class="gtag">Auto LVL</span>
-          </div>
-        </div>
-        <div class="game-card">
-          <div class="game-card-glow"></div>
-          <div class="game-status"></div>
-          <div class="game-name">Stands Upright</div>
-          <div class="game-count">12+ Features</div>
-          <div class="game-tags">
-            <span class="gtag">Auto Roll</span>
-            <span class="gtag">Auto Lair</span>
-            <span class="gtag">Auto Skills</span>
-            <span class="gtag">Collect Items</span>
-          </div>
-        </div>
-        <div class="game-card">
-          <div class="game-card-glow"></div>
-          <div class="game-status"></div>
-          <div class="game-name">BloxStrike</div>
-          <div class="game-count">10+ Features</div>
-          <div class="game-tags">
-            <span class="gtag">No Spread</span>
-            <span class="gtag">Silent Aim</span>
-            <span class="gtag">Bhop</span>
-            <span class="gtag">Skin Changer</span>
-          </div>
-        </div>
-        <div class="game-card">
-          <div class="game-card-glow"></div>
-          <div class="game-status"></div>
-          <div class="game-name">ABA</div>
-          <div class="game-count">8+ Features</div>
-          <div class="game-tags">
-            <span class="gtag">Gold Farm</span>
-            <span class="gtag">Auto Vote</span>
-            <span class="gtag">Flick Aim</span>
-            <span class="gtag">Mine ESP</span>
-          </div>
-        </div>
-        <div class="game-card">
-          <div class="game-card-glow"></div>
-          <div class="game-status"></div>
-          <div class="game-name">Jood Piece</div>
-          <div class="game-count">8+ Features</div>
-          <div class="game-tags">
-            <span class="gtag">Auto Roll</span>
-            <span class="gtag">Auto M1</span>
-            <span class="gtag">Webhook</span>
-            <span class="gtag">Island Load</span>
-          </div>
-        </div>
-        <div class="game-card">
-          <div class="game-card-glow"></div>
-          <div class="game-status"></div>
-          <div class="game-name">Counter Blox</div>
-          <div class="game-count">7+ Features</div>
-          <div class="game-tags">
-            <span class="gtag">ESP</span>
-            <span class="gtag">Chams</span>
-            <span class="gtag">Auto Fire</span>
-            <span class="gtag">FOV Circle</span>
-          </div>
-        </div>
+  <section id="games">
+    <div class="games-sec">
+      <div class="games-inner">
+        <p class="sec-eye reveal">// supported games</p>
+        <h2 class="sec-h reveal rd1">One Hub.<br><span class="dim">Every Game.</span></h2>
+        <p class="sec-p reveal rd2">Each game has its own dedicated module, updated independently. Click a game to see what's inside.</p>
+        <div class="games-grid" id="gGrid"></div>
       </div>
     </div>
   </section>
 
-  <!-- ARCHITECTURE -->
-  <section id="architecture">
-    <p class="section-eyebrow">// under the hood</p>
-    <h2 class="section-title">Engineered<br><span class="dim">Architecture</span></h2>
-    <p class="section-desc">
-      Every system follows strict conventions. Centralized state, isolated threads, and clean remote management — no spaghetti, no leaks.
-    </p>
-    <div class="arch-grid">
-      <div class="arch-block">
-        <div class="arch-label">State Management</div>
-        <div class="arch-name">Variables</div>
-        <div class="arch-desc">Centralized Toggles, Active, Selected, and Threads tables. All feature state lives here — no globals, no scattered booleans.</div>
-        <div class="code-chip">Variables.Toggles.AutoFarm</div>
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-sec">
+      <div>
+        <p class="sec-eye reveal">// the project</p>
+        <h2 class="sec-h reveal rd1">Made by a<br><span class="dim">Developer,</span><br>for Players.</h2>
+        <p class="sec-p reveal rd2" style="margin-top:14px;">Kyo Hub is a solo passion project — no corporation, no team, no monetization agenda. Just clean code, shipped fast, maintained with care.</p>
+        <div style="margin-top:28px;" class="reveal rd3"><a href="https://github.com/zKiroNany/Kyo-Hub" class="btn-p" target="_blank">View Source on GitHub</a></div>
       </div>
-      <div class="arch-block">
-        <div class="arch-label">Remote Layer</div>
-        <div class="arch-name">Remotes Table</div>
-        <div class="arch-desc">All RemoteEvent/Function references stored in a single Remotes table. pcall-wrapped on every fire. No inline remote lookups anywhere in feature code.</div>
-        <div class="code-chip">Remotes.Attack:FireServer()</div>
-      </div>
-      <div class="arch-block">
-        <div class="arch-label">Movement System</div>
-        <div class="arch-name">TweenService TP</div>
-        <div class="arch-desc">TweenSpeed slider shared across all toggles. TweenApproach helper for distances above 80–100 studs. Direct CFrame for close-range lock-on.</div>
-        <div class="code-chip">TweenApproach(target, speed)</div>
-      </div>
-      <div class="arch-block">
-        <div class="arch-label">Thread Model</div>
-        <div class="arch-name">task.spawn + Heartbeat</div>
-        <div class="arch-desc">Non-blocking spawns via task.spawn. Frame loops on RunService.Heartbeat. Thread references stored for clean cancellation — no orphaned loops.</div>
-        <div class="code-chip">Variables.Threads.Farm</div>
-      </div>
-      <div class="arch-block">
-        <div class="arch-label">Loader</div>
-        <div class="arch-name">Luarmor Isolation</div>
-        <div class="arch-desc">Strict PlaceId-based isolation. Shared utilities at top, named PlaceId variables, isIdInList checks, sequential game blocks. One URL, all games.</div>
-        <div class="code-chip">isIdInList(game.PlaceId, IDS)</div>
-      </div>
-      <div class="arch-block">
-        <div class="arch-label">UI Layer</div>
-        <div class="arch-name">Fluent UI</div>
-        <div class="arch-desc">Fluent UI with SaveManager and InterfaceManager. Obsidian UI used for BloxStrike variant. Mobile layout handled via offset/TabWidth tuning.</div>
-        <div class="code-chip">SaveManager:LoadAutoloadConfig()</div>
+      <div class="ab-grid reveal rd2">
+        <div class="ab-cell"><div class="ab-icon">⚡</div><div class="ab-lbl">Speed</div><div class="ab-val">Frame-perfect</div></div>
+        <div class="ab-cell"><div class="ab-icon">🔒</div><div class="ab-lbl">Access</div><div class="ab-val">Always Free</div></div>
+        <div class="ab-cell"><div class="ab-icon">🎮</div><div class="ab-lbl">Games</div><div class="ab-val">7+ Active</div></div>
+        <div class="ab-cell"><div class="ab-icon">🔔</div><div class="ab-lbl">Alerts</div><div class="ab-val">Discord Live</div></div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer>
-    <div class="footer-logo">KYO HUB</div>
-    <div class="footer-note">For educational purposes · Lua Scripting Project</div>
-    <div class="footer-copy">© 2025 Kayke · All rights reserved</div>
+    <div class="f-logo">KYO HUB</div>
+    <div class="f-note">For educational purposes &nbsp;·&nbsp; Lua Scripting Project &nbsp;·&nbsp; © 2025 Kayke</div>
+    <div class="f-note">github.com/zKiroNany/Kyo-Hub</div>
   </footer>
-
 </div>
 
 <script>
-(function(){
-  /* ── PARTICLES ── */
-  const pc = document.getElementById('particles');
-  for(let i=0;i<40;i++){
-    const s = document.createElement('div');
-    s.className='spark';
-    s.style.cssText = `
-      left:${Math.random()*100}%;
-      top:${40+Math.random()*50}%;
-      --d:${3+Math.random()*5}s;
-      --delay:${Math.random()*4}s;
-      --dx:${(Math.random()-.5)*80}px;
-      --dy:${-80-Math.random()*120}px;
-    `;
-    pc.appendChild(s);
+/* ─── DATA ─── */
+const GAMES=[
+  {name:'Sailor Piece',cnt:'15+ features',tags:['Auto Farm','Auto Boss','Auto LVL','NPC TP','Pity Farm'],feats:['Auto Grind Kill XP','Auto Boss Farm','Auto LVL Grinding','Boss Pity System','NPC Teleport','Auto Farm Selected Bosses','TweenSpeed Control','Priority System (3 levels)','Auto Build Swap']},
+  {name:'Stands Upright',cnt:'12+ features',tags:['Auto Roll','Auto Lair','Auto Skills','Collect Items'],feats:['Auto Roll (4 Modes)','Auto Collect Items','Auto Lair Farm','Auto Join Lair','Auto Skills','Auto Easter Egg','Webhook on Rare Stands','Slot-aware Stand Storage']},
+  {name:'BloxStrike',cnt:'10+ features',tags:['No Spread','Silent Aim','Bhop','Skin Changer'],feats:['No Spread','No Recoil','Silent Aim','Auto Fire','Bunnyhop','SpinBot','Air Strafe','Skin Randomizer','Head Hitbox Extender']},
+  {name:'ABA',cnt:'8+ features',tags:['Gold Farm','Auto Vote','Flick Aim','Mine ESP'],feats:['Gold Farming System','Auto Vote','Flick Silent Aim','Triggerbot','Bunnyhop','Mine & Trap ESP','Danger Radius Visual','Discord Webhook Alerts']},
+  {name:'Jood Piece',cnt:'8+ features',tags:['Auto Roll','Auto M1','Webhook','Island Load'],feats:['Auto Roll','Auto M1','Auto Stats','Auto Equip','NPC Teleport','Auto Clicker','Code Redemption','Discord Webhook']},
+  {name:'Counter Blox',cnt:'7+ features',tags:['ESP','Chams','Auto Fire','FOV Circle'],feats:['Double-Box ESP','HP Bars','Name & Distance Labels','Weapon Labels','Tracers','Chams','FOV Circle']},
+];
+const MARQUEE=['Fast Execution','Always Free','Multi-Game','Stable & Reliable','Auto Farm','Auto Roll','Discord Alerts','Actively Maintained','No Keys Required','Premium Quality','Open Source','Mobile Friendly'];
+const ADJS=['Premium','Reliable','Fast','Stable','Free','Powerful','Smooth','Precise'];
+
+/* ─── PARTICLES ─── */
+const pc=document.getElementById('lparts');
+for(let i=0;i<44;i++){const s=document.createElement('div');s.className='lp';s.style.cssText=`left:${Math.random()*100}%;top:${28+Math.random()*60}%;--d:${3+Math.random()*5}s;--del:${Math.random()*5}s;--dx:${(Math.random()-.5)*90}px;--dy:${-70-Math.random()*130}px;`;pc.appendChild(s);}
+
+/* ─── WAVE CANVAS ─── */
+const cvs=document.getElementById('wc');
+const ctx=cvs.getContext('2d');
+let fillT=0,fillC=0,wOff=0,rafId;
+function resizeCvs(){
+  const r=document.getElementById('lBase').getBoundingClientRect();
+  cvs.width=r.width*devicePixelRatio;cvs.height=r.height*devicePixelRatio;
+  cvs.style.width=r.width+'px';cvs.style.height=r.height+'px';
+  ctx.scale(devicePixelRatio,devicePixelRatio);
+}
+function drawWave(){
+  const w=cvs.width/devicePixelRatio,h=cvs.height/devicePixelRatio;
+  ctx.clearRect(0,0,w,h);
+  fillC+=(fillT-fillC)*.038;
+  const sy=h-(fillC*h),amp=5+fillC*9,freq=.021;
+  wOff+=1.5;
+  ctx.beginPath();ctx.moveTo(0,h);
+  for(let x=0;x<=w;x+=2){
+    const y=sy+Math.sin((x*freq)+wOff*.05)*amp+Math.sin((x*freq*1.75)+wOff*.08)*(amp*.45);
+    ctx.lineTo(x,y);
   }
+  ctx.lineTo(w,h);ctx.closePath();
+  const g=ctx.createLinearGradient(0,sy-amp,0,h);
+  g.addColorStop(0,'rgba(192,132,252,0.93)');g.addColorStop(0.4,'rgba(168,85,247,0.88)');g.addColorStop(1,'rgba(107,33,214,0.82)');
+  ctx.fillStyle=g;ctx.fill();
+  rafId=requestAnimationFrame(drawWave);
+}
 
-  /* ── WORDS ── */
-  const words = ['Quality','Efficiency','Precision','Power','Speed','Clean Code','Reliability','Fluent UI'];
-  const streamEl = document.getElementById('word-stream');
-  const fillEl   = document.getElementById('fillTitle');
-  const progressEl = document.getElementById('progressFill');
-  const titleEl  = document.querySelector('.liquid-title');
-  const wrapEl   = document.getElementById('liquidWrap');
-  const loader   = document.getElementById('loader');
-  const app      = document.getElementById('app');
+/* ─── LOADER SEQUENCE ─── */
+const adjEl=document.getElementById('adjW');
+const lCW=document.getElementById('lCW');
+const lBase=document.getElementById('lBase');
+const lWrap=document.getElementById('lWrap');
+const lPF=document.getElementById('lPF');
+const loader=document.getElementById('loader');
+const app=document.getElementById('app');
+let ai=0;
 
-  let current = 0;
-  const totalSteps = words.length;
-
-  function showWord(){
-    if(current >= totalSteps){
-      // fill complete → glow → shake → reveal
-      titleEl.classList.add('glowing');
+function runAdj(){
+  if(ai>=ADJS.length){
+    lBase.classList.add('glow');
+    setTimeout(()=>{
+      lWrap.classList.add('pop');
       setTimeout(()=>{
-        wrapEl.classList.add('pop');
-        setTimeout(()=>{
-          loader.classList.add('exit');
-          app.classList.add('visible');
-          setTimeout(()=>{ loader.style.display='none'; }, 800);
-        }, 650);
-      }, 300);
-      return;
-    }
-
-    // add tag
-    const tag = document.createElement('span');
-    tag.className='word-tag';
-    tag.textContent = words[current];
-    // keep only last 3
-    const existing = streamEl.querySelectorAll('.word-tag');
-    if(existing.length >= 3){
-      existing[0].style.transition='opacity .3s';
-      existing[0].style.opacity='0';
-      setTimeout(()=>existing[0].remove(),300);
-    }
-    streamEl.appendChild(tag);
-
-    // rise fill
-    const pct = Math.round(((current+1)/totalSteps)*100);
-    const clipTop = 100 - pct; // inset from top = 100%-pct
-    fillEl.style.transition = 'clip-path .6s cubic-bezier(.22,.61,.36,1)';
-    fillEl.style.clipPath = `inset(${clipTop}% 0% 0% 0%)`;
-
-    // progress bar
-    progressEl.style.width = pct + '%';
-
-    current++;
-    setTimeout(showWord, 520);
+        cancelAnimationFrame(rafId);
+        loader.classList.add('done');
+        app.classList.add('on');
+        document.querySelectorAll('.hero .reveal').forEach(el=>el.classList.add('visible'));
+        setTimeout(()=>{loader.style.display='none';},1000);
+      },660);
+    },340);
+    return;
   }
+  adjEl.textContent=ADJS[ai];
+  adjEl.className='adj-word travel';
+  setTimeout(()=>{
+    adjEl.className='adj-word absorb';
+    lWrap.classList.remove('shake');void lWrap.offsetWidth;lWrap.classList.add('shake');
+    fillT=(ai+1)/ADJS.length;
+    const ct=100-Math.round(fillT*100);
+    lCW.style.clipPath=`inset(${ct}% 0% 0% 0%)`;
+    lPF.style.width=Math.round(fillT*100)+'%';
+    ai++;setTimeout(runAdj,475);
+  },1050);
+}
 
-  // start after tiny delay for fonts
-  setTimeout(showWord, 600);
-})();
+window.addEventListener('DOMContentLoaded',()=>{
+  resizeCvs();drawWave();
+  setTimeout(runAdj,550);
+});
+window.addEventListener('resize',resizeCvs);
+
+/* ─── MARQUEE ─── */
+const mi=document.getElementById('marqI');
+[...MARQUEE,...MARQUEE].forEach(t=>{const d=document.createElement('div');d.className='mi';d.innerHTML=`<span class="dot"></span>${t}`;mi.appendChild(d);});
+
+/* ─── GAMES GRID ─── */
+const gg=document.getElementById('gGrid');
+const delays=['','rd1','rd2','rd3','rd4','rd5'];
+GAMES.forEach((g,i)=>{
+  const tH=g.tags.map(t=>`<span class="gtag">${t}</span>`).join('');
+  const d=document.createElement('div');d.className=`gc reveal ${delays[i%6]}`;
+  d.innerHTML=`<div class="gc-orb"></div><div class="gc-dot"></div><div class="gc-name">${g.name}</div><div class="gc-cnt">${g.cnt}</div><div class="gc-tags">${tH}</div><button class="gc-btn" data-i="${i}"><svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3.5"/><path d="M5 3.5v3M3.5 5h3" stroke-linecap="round"/></svg>View Features</button>`;
+  gg.appendChild(d);
+});
+
+/* ─── MODAL ─── */
+const ov=document.getElementById('modal-ov');
+const mClose=document.getElementById('mClose');
+const mGame=document.getElementById('mGame');
+const mFeats=document.getElementById('mFeats');
+
+gg.addEventListener('click',e=>{
+  const btn=e.target.closest('.gc-btn');if(!btn)return;
+  const g=GAMES[+btn.dataset.i];
+  mGame.textContent=g.name;
+  mFeats.innerHTML=g.feats.map(f=>`<div class="mf"><div class="mf-dot"></div><div class="mf-text">${f}</div></div>`).join('');
+  ov.classList.add('open');document.body.style.overflow='hidden';
+});
+function closeMod(){ov.classList.remove('open');document.body.style.overflow='';}
+mClose.addEventListener('click',closeMod);
+ov.addEventListener('click',e=>{if(e.target===ov)closeMod();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMod();});
+
+/* ─── SCROLL REVEAL ─── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>{if(!el.closest('.hero'))obs.observe(el);});
+
+/* ─── COUNT UP ─── */
+const cObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const el=e.target,target=+el.dataset.count;
+    let cur=0;const step=Math.ceil(target/38);
+    const iv=setInterval(()=>{cur=Math.min(cur+step,target);el.textContent=cur+(target>=10?'+':'');if(cur>=target)clearInterval(iv);},34);
+    cObs.unobserve(el);
+  });
+},{threshold:.5});
+document.querySelectorAll('.snum[data-count]').forEach(el=>cObs.observe(el));
 </script>
 </body>
 </html>
