@@ -1,517 +1,1922 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>Kyo Hub — Premium Scripts</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
-:root {
-  --p0:#09050f; --p1:#120824; --p2:#1e0d3a;
-  --pc:#6b21d6; --pb:#a855f7; --pg:#c084fc; --pe:#e9d5ff;
-  --w:#f5f0ff; --off:#c4b5fd66;
+:root{
+  --p0:#09050f;
+  --p1:#120824;
+  --p2:#1e0d3a;
+
+  --pc:#6b21d6;
+  --pb:#a855f7;
+  --pg:#c084fc;
+  --pe:#e9d5ff;
+
+  --w:#f5f0ff;
+  --off:#c4b5fd66;
+
   --gold1:#facc15;
---gold2:#f59e0b;
---gold3:#fde68a;
-  --border:rgba(168,85,247,0.15); --border2:rgba(168,85,247,0.08);
+  --gold2:#f59e0b;
+  --gold3:#fde68a;
+
+  --border:rgba(168,85,247,0.15);
+  --border2:rgba(168,85,247,0.08);
 }
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{background:var(--p0);font-family:'Inter',sans-serif;color:var(--w);overflow-x:hidden;}
-::-webkit-scrollbar{width:3px;}
-::-webkit-scrollbar-track{background:var(--p0);}
-::-webkit-scrollbar-thumb{background:var(--pc);border-radius:2px;}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:var(--p0);
+  font-family:'Inter',sans-serif;
+  color:var(--w);
+  overflow-x:hidden;
+}
+
+::-webkit-scrollbar{
+  width:3px;
+}
+
+::-webkit-scrollbar-track{
+  background:var(--p0);
+}
+
+::-webkit-scrollbar-thumb{
+  background:var(--pc);
+}
+
 body::before{
-  content:'';position:fixed;inset:0;z-index:9000;pointer-events:none;
+  content:'';
+  position:fixed;
+  inset:0;
+  z-index:9000;
+  pointer-events:none;
+  opacity:.45;
+
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  opacity:.5;
 }
 
-/* ── LOADER ── */
+/* LOADER */
+
 #loader{
-  position:fixed;inset:0;z-index:5000;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:var(--p0);overflow:hidden;
-}
-#loader.done{animation:ldExit .85s .05s ease forwards;}
-@keyframes ldExit{0%{opacity:1;transform:scale(1);}60%{opacity:1;transform:scale(1.04);}100%{opacity:0;transform:scale(1.07);pointer-events:none;}}
-#loader::after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(107,33,214,.025) 3px,rgba(107,33,214,.025) 6px);}
-.lc{position:absolute;width:48px;height:48px;}
-.lc::before,.lc::after{content:'';position:absolute;background:rgba(168,85,247,.4);border-radius:1px;}
-.lc::before{width:2px;height:100%;}.lc::after{width:100%;height:2px;}
-.lc.tl{top:26px;left:26px;}.lc.tr{top:26px;right:26px;transform:scaleX(-1);}
-.lc.bl{bottom:26px;left:26px;transform:scaleY(-1);}.lc.br{bottom:26px;right:26px;transform:scale(-1);}
-#lparts{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
-.lp{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--pb);opacity:0;animation:lpF var(--d) var(--del) ease-in infinite;}
-@keyframes lpF{0%{opacity:0;transform:translate(0,0)scale(1);}25%{opacity:.7;}100%{opacity:0;transform:translate(var(--dx),var(--dy))scale(0);}}
+  position:fixed;
+  inset:0;
+  z-index:5000;
 
-/* adj track */
-#adj-track{position:relative;height:40px;width:min(500px,88vw);overflow:hidden;margin-bottom:18px;display:flex;align-items:center;}
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  overflow:hidden;
+  background:var(--p0);
+}
+
+#loader.done{
+  animation:loaderExit .9s .05s ease forwards;
+}
+
+@keyframes loaderExit{
+  0%{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  100%{
+    opacity:0;
+    transform:scale(1.06);
+    pointer-events:none;
+  }
+}
+
+#loader::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(107,33,214,.025) 3px,
+    rgba(107,33,214,.025) 6px
+  );
+}
+
+.lc{
+  position:absolute;
+  width:48px;
+  height:48px;
+}
+
+.lc::before,
+.lc::after{
+  content:'';
+  position:absolute;
+  background:rgba(168,85,247,.4);
+  border-radius:1px;
+}
+
+.lc::before{
+  width:2px;
+  height:100%;
+}
+
+.lc::after{
+  width:100%;
+  height:2px;
+}
+
+.lc.tl{
+  top:26px;
+  left:26px;
+}
+
+.lc.tr{
+  top:26px;
+  right:26px;
+  transform:scaleX(-1);
+}
+
+.lc.bl{
+  bottom:26px;
+  left:26px;
+  transform:scaleY(-1);
+}
+
+.lc.br{
+  bottom:26px;
+  right:26px;
+  transform:scale(-1);
+}
+
+#adj-track{
+  position:relative;
+  height:40px;
+  width:min(500px,88vw);
+  overflow:hidden;
+
+  margin-bottom:18px;
+
+  display:flex;
+  align-items:center;
+}
+
 .adj-word{
-  position:absolute;right:-320px;
-  font-family:'Space Mono',monospace;font-size:clamp(9px,2.5vw,12px);
-  letter-spacing:.28em;text-transform:uppercase;color:var(--pb);white-space:nowrap;
-  opacity:0;padding:4px 14px;border:1px solid rgba(168,85,247,.38);border-radius:2px;
-  background:rgba(107,33,214,.1);box-shadow:0 0 12px rgba(107,33,214,.28);
-}
-.adj-word.travel{animation:adjT 1.05s cubic-bezier(.22,.6,.36,1) forwards;}
-.adj-word.absorb{animation:adjA .32s cubic-bezier(.55,0,1,.45) forwards;}
-@keyframes adjT{0%{right:-320px;opacity:0;transform:scale(.88);}15%{opacity:1;}85%{right:50%;transform:translateX(50%)scale(1);opacity:1;}100%{right:50%;transform:translateX(50%)scale(1);opacity:1;}}
-@keyframes adjA{0%{right:50%;transform:translateX(50%)scale(1);opacity:1;}100%{right:50%;transform:translateX(50%)scale(.1);opacity:0;}}
+  position:absolute;
+  right:-320px;
 
-/* title */
-.l-wrap{position:relative;display:inline-block;margin-bottom:22px;}
-.l-wrap.shake{animation:lShake .26s ease;}
-@keyframes lShake{0%{transform:scale(1)translateX(0);}20%{transform:scale(1.016)translateX(-3px);}40%{transform:scale(1.016)translateX(3px);}60%{transform:scale(1.016)translateX(-2px);}80%{transform:scale(1.016)translateX(2px);}100%{transform:scale(1)translateX(0);}}
-.l-wrap.pop{animation:lPop .72s ease forwards;}
-@keyframes lPop{0%{transform:scale(1);}30%{transform:scale(1.07);}55%{transform:scale(1.05)translateY(-5px);}80%{transform:scale(1.09);opacity:1;}100%{transform:scale(1.13);opacity:0;}}
-.l-base{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(60px,13vw,145px);letter-spacing:.03em;color:var(--w);position:relative;z-index:2;user-select:none;line-height:1;-webkit-text-stroke:1px rgba(200,160,255,.12);}
-.l-base.glow{text-shadow:0 0 80px rgba(168,85,247,.85),0 0 160px rgba(168,85,247,.3);transition:text-shadow .4s;}
+  opacity:0;
+  white-space:nowrap;
+
+  padding:4px 14px;
+  border:1px solid rgba(168,85,247,.38);
+  border-radius:2px;
+
+  background:rgba(107,33,214,.1);
+  box-shadow:0 0 12px rgba(107,33,214,.28);
+
+  font-family:'Space Mono',monospace;
+  font-size:clamp(9px,2.5vw,12px);
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--pb);
+}
+
+.adj-word.travel{
+  animation:adjT 1.05s cubic-bezier(.22,.6,.36,1) forwards;
+}
+
+.adj-word.absorb{
+  animation:adjA .32s cubic-bezier(.55,0,1,.45) forwards;
+}
+
+@keyframes adjT{
+  0%{
+    right:-320px;
+    opacity:0;
+    transform:scale(.88);
+  }
+
+  15%{
+    opacity:1;
+  }
+
+  85%{
+    right:50%;
+    opacity:1;
+    transform:translateX(50%) scale(1);
+  }
+
+  100%{
+    right:50%;
+    opacity:1;
+    transform:translateX(50%) scale(1);
+  }
+}
+
+@keyframes adjA{
+  0%{
+    right:50%;
+    opacity:1;
+    transform:translateX(50%) scale(1);
+  }
+
+  100%{
+    right:50%;
+    opacity:0;
+    transform:translateX(50%) scale(.1);
+  }
+}
+
+.l-wrap{
+  position:relative;
+  display:inline-block;
+  margin-bottom:24px;
+}
+
+.l-base{
+  position:relative;
+  z-index:2;
+
+  line-height:1;
+  user-select:none;
+
+  font-family:'Montserrat',sans-serif;
+  font-weight:900;
+  font-size:clamp(60px,13vw,145px);
+  letter-spacing:.03em;
+
+  color:transparent;
+
+  -webkit-text-stroke:1px rgba(200,160,255,.12);
+}
+
+.l-base::before{
+  content:'KYO HUB';
+  position:absolute;
+  inset:0;
+
+  color:var(--w);
+  z-index:-1;
+}
+
 .l-canvas-wrap{
   position:absolute;
   inset:0;
   z-index:3;
+
   overflow:hidden;
+
   clip-path:inset(100% 0% 0% 0%);
   transition:clip-path .65s cubic-bezier(.22,.61,.36,1);
-
-  -webkit-mask-image:text;
-  -webkit-mask-repeat:no-repeat;
-  -webkit-mask-position:center;
-  -webkit-mask-size:contain;
 }
-.l-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;}
-.l-fill{position:absolute;inset:0;font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(60px,13vw,145px);letter-spacing:.03em;line-height:1;user-select:none;background:linear-gradient(160deg,var(--pg) 0%,var(--pb) 40%,var(--pc) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;justify-content:center;white-space:nowrap;z-index:4;}
-.l-progress{width:min(250px,70vw);height:1px;background:rgba(168,85,247,.1);border-radius:99px;overflow:hidden;margin-bottom:38px;}
-.l-pfill{height:100%;width:0%;background:linear-gradient(90deg,var(--pc),var(--pg));border-radius:99px;transition:width .5s ease;box-shadow:0 0 10px var(--pb);}
-.l-footer{position:absolute;bottom:30px;font-family:'Space Mono',monospace;font-size:clamp(8px,2vw,10px);letter-spacing:.28em;text-transform:uppercase;color:rgba(196,181,253,.3);}
-.l-footer em{color:var(--pb);font-style:normal;}
-  .gold{
-  background:linear-gradient(135deg,var(--gold3),var(--gold1),var(--gold2));
+
+.l-canvas-wrap canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+
+.l-fill{
+  position:absolute;
+  inset:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  white-space:nowrap;
+
+  font-family:'Montserrat',sans-serif;
+  font-weight:900;
+  font-size:clamp(60px,13vw,145px);
+  letter-spacing:.03em;
+  line-height:1;
+
+  background:linear-gradient(
+    160deg,
+    var(--pg) 0%,
+    var(--pb) 40%,
+    var(--pc) 80%
+  );
+
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   background-clip:text;
 }
 
-/* ── REVEAL ── */
-.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease;}
-.reveal.visible{opacity:1;transform:translateY(0);}
-.rd1{transition-delay:.1s;}.rd2{transition-delay:.2s;}.rd3{transition-delay:.3s;}.rd4{transition-delay:.4s;}.rd5{transition-delay:.5s;}
+.l-progress{
+  width:min(250px,70vw);
+  height:1px;
 
-/* ── APP ── */
-#app{opacity:0;pointer-events:none;transition:opacity .9s ease;}
-#app.on{opacity:1;pointer-events:all;}
+  overflow:hidden;
 
-/* ── NAV ── */
-nav{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,5vw,48px);height:62px;background:rgba(9,5,15,.82);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--border);}
-.nav-logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:19px;letter-spacing:.08em;color:var(--pb);text-shadow:0 0 20px rgba(168,85,247,.45);}
-.nav-logo span{color:var(--w);}
-.nav-links{display:flex;gap:clamp(14px,3vw,30px);list-style:none;}
-.nav-links a{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--off);text-decoration:none;transition:color .2s;font-family:'Space Mono',monospace;}
-.nav-links a:hover{color:var(--pg);}
-.nav-pill{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.15em;padding:6px 14px;border:1px solid var(--border);color:var(--pb);border-radius:99px;background:rgba(107,33,214,.1);white-space:nowrap;}
-@media(max-width:580px){.nav-links{display:none;}}
+  margin-bottom:38px;
 
-/* ── HERO ── */
-.hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px clamp(18px,6vw,60px) 60px;position:relative;overflow:hidden;text-align:center;}
-.hero-orb{position:absolute;pointer-events:none;border-radius:50%;filter:blur(90px);}
-.hero-orb.a{width:min(580px,90vw);height:min(580px,90vw);background:radial-gradient(circle,rgba(107,33,214,.17),transparent 70%);top:-12%;left:50%;transform:translateX(-50%);}
-.hero-orb.b{width:260px;height:260px;background:radial-gradient(circle,rgba(168,85,247,.1),transparent 70%);bottom:8%;right:-4%;}
-.hero-orb.c{width:180px;height:180px;background:radial-gradient(circle,rgba(192,132,252,.07),transparent 70%);top:20%;left:3%;}
-.hero-eye{font-family:'Space Mono',monospace;font-size:clamp(9px,2vw,11px);letter-spacing:.4em;text-transform:uppercase;color:var(--pb);margin-bottom:18px;position:relative;z-index:1;}
-.hero-h1{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(52px,12vw,150px);line-height:.94;letter-spacing:.02em;color:var(--w);position:relative;z-index:1;}
-.hero-h1 .acc{color:var(--pb);}
-.hero-p{max-width:480px;margin:22px auto 0;font-size:clamp(13px,2vw,15px);line-height:1.8;color:var(--off);position:relative;z-index:1;}
-.hero-cta{display:flex;gap:11px;margin-top:42px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1;}
-.btn-p{padding:clamp(11px,2vw,13px) clamp(22px,4vw,36px);background:linear-gradient(135deg,var(--pc),var(--pb));color:var(--w);border:none;border-radius:4px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;text-decoration:none;box-shadow:0 0 38px rgba(107,33,214,.42);transition:box-shadow .2s,transform .2s;display:inline-block;}
-.btn-p:hover{transform:translateY(-2px);box-shadow:0 0 58px rgba(107,33,214,.62);}
-.btn-g{padding:clamp(11px,2vw,13px) clamp(22px,4vw,36px);background:transparent;border:1px solid rgba(168,85,247,.45);color:var(--pg);border-radius:4px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:background .2s,transform .2s;display:inline-block;}
-.btn-g:hover{background:rgba(107,33,214,.12);transform:translateY(-2px);}
+  background:rgba(168,85,247,.1);
+}
 
-/* ── MARQUEE ── */
-.marquee-strip{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(26,10,46,.25);padding:13px 0;}
-.marquee-inner{display:flex;gap:36px;width:max-content;animation:marq 24s linear infinite;}
-@keyframes marq{to{transform:translateX(-50%);}}
-.mi{display:flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:rgba(196,181,253,.3);white-space:nowrap;}
-.mi .dot{width:3px;height:3px;border-radius:50%;background:var(--pb);flex-shrink:0;}
+.l-pfill{
+  width:0%;
+  height:100%;
 
-/* ── STATS ── */
-.stats-sec{padding:80px clamp(18px,6vw,60px);}
-.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;max-width:860px;margin:0 auto;}
-@media(min-width:600px){.stats-grid{grid-template-columns:repeat(4,1fr);}}
-.sc{background:rgba(26,10,46,.38);border:1px solid var(--border2);padding:clamp(26px,5vw,42px) clamp(14px,3vw,26px);text-align:center;position:relative;overflow:hidden;transition:background .25s,border-color .25s;}
-.sc::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% -20%,rgba(107,33,214,.14),transparent);opacity:0;transition:opacity .3s;}
-.sc:hover{background:rgba(107,33,214,.09);border-color:rgba(168,85,247,.28);}.sc:hover::before{opacity:1;}
-.snum{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(38px,8vw,62px);line-height:1;background:linear-gradient(135deg,var(--pg),var(--pb));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.slbl{font-family:'Space Mono',monospace;font-size:clamp(8px,1.5vw,9px);letter-spacing:.2em;text-transform:uppercase;color:var(--off);margin-top:5px;}
+  transition:width .5s ease;
 
-/* ── FEATURES ── */
-.feat-sec{padding:100px clamp(18px,6vw,60px);max-width:1180px;margin:0 auto;}
-.sec-eye{font-family:'Space Mono',monospace;font-size:clamp(9px,2vw,11px);letter-spacing:.38em;text-transform:uppercase;color:var(--pb);margin-bottom:14px;}
-.sec-h{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(30px,6vw,66px);line-height:1;color:var(--w);margin-bottom:13px;}
-.sec-h .dim{color:rgba(196,181,253,.32);}
-.sec-p{font-size:clamp(13px,2vw,15px);line-height:1.8;color:var(--off);max-width:500px;}
-.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:1px;margin-top:58px;border:1px solid var(--border2);background:var(--border2);}
-.fc{background:var(--p0);padding:clamp(22px,4vw,34px) clamp(18px,3vw,30px);transition:background .25s;position:relative;overflow:hidden;}
-.fc::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--pc),transparent);transform:scaleX(0);transition:transform .3s;}
-.fc:hover{background:rgba(107,33,214,.07);}.fc:hover::after{transform:scaleX(1);}
-.fn{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.2em;color:rgba(168,85,247,.25);margin-bottom:14px;}
-.ft{font-family:'Montserrat',sans-serif;font-weight:700;font-size:clamp(14px,2.5vw,17px);color:var(--w);margin-bottom:9px;}
-.fd{font-size:clamp(12px,1.8vw,13px);line-height:1.75;color:var(--off);}
-.fb{display:inline-block;margin-top:14px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;padding:3px 10px;border:1px solid rgba(168,85,247,.22);color:var(--pb);border-radius:99px;background:rgba(107,33,214,.09);}
+  background:linear-gradient(
+    90deg,
+    var(--pc),
+    var(--pg)
+  );
 
-/* ── GAMES ── */
-.games-sec{padding:100px clamp(18px,6vw,60px);background:linear-gradient(180deg,transparent,rgba(26,10,46,.2),transparent);}
-.games-inner{max-width:1080px;margin:0 auto;}
-.games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,2vw,14px);margin-top:58px;}
-@media(max-width:680px){.games-grid{grid-template-columns:1fr;}}
-@media(min-width:681px) and (max-width:860px){.games-grid{grid-template-columns:repeat(2,1fr);}}
-.gc{background:linear-gradient(145deg,rgba(26,10,46,.65),rgba(9,5,15,.88));border:1px solid var(--border);border-radius:6px;padding:clamp(18px,3vw,26px);position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;}
-.gc:hover{transform:translateY(-4px);border-color:rgba(168,85,247,.38);box-shadow:0 10px 44px rgba(107,33,214,.18);}
-.gc-orb{position:absolute;top:-28px;right:-28px;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.18),transparent 70%);pointer-events:none;}
-.gc-dot{position:absolute;top:16px;right:16px;width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 7px #4ade80;animation:pdot 2s ease infinite;}
-@keyframes pdot{0%,100%{box-shadow:0 0 5px #4ade80;}50%{box-shadow:0 0 13px #4ade80;}}
-.gc-name{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(14px,2.5vw,18px);color:var(--w);margin-bottom:3px;}
-.gc-cnt{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--pb);margin-bottom:12px;}
-.gc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;}
-.gtag{font-size:9px;font-family:'Space Mono',monospace;letter-spacing:.07em;padding:3px 7px;background:rgba(107,33,214,.13);color:rgba(196,181,253,.45);border:1px solid var(--border2);border-radius:2px;}
-.gc-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;padding:7px 14px;background:transparent;border:1px solid rgba(168,85,247,.28);color:var(--pb);border-radius:3px;cursor:pointer;transition:background .2s,border-color .2s;width:100%;}
-.gc-btn:hover{background:rgba(107,33,214,.13);border-color:rgba(168,85,247,.48);}
+  box-shadow:0 0 10px var(--pb);
+}
 
-/* ── ABOUT ── */
-.about-sec{padding:100px clamp(18px,6vw,60px);max-width:1060px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
-@media(max-width:680px){.about-sec{grid-template-columns:1fr;gap:36px;}}
-.ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border:1px solid var(--border2);}
-.ab-cell{padding:clamp(14px,3vw,22px);background:rgba(26,10,46,.28);transition:background .2s;}
-.ab-cell:hover{background:rgba(107,33,214,.07);}
-.ab-icon{font-size:20px;margin-bottom:7px;}
-.ab-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--pb);margin-bottom:3px;}
-.ab-val{font-family:'Montserrat',sans-serif;font-weight:700;font-size:clamp(12px,2vw,14px);color:var(--w);}
+.l-footer{
+  position:absolute;
+  bottom:30px;
 
-/* ── MODAL ── */
-#modal-ov{position:fixed;inset:0;z-index:4000;background:rgba(9,5,15,.88);backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none;transition:opacity .25s;}
-#modal-ov.open{opacity:1;pointer-events:all;}
-.modal-box{background:var(--p1);border:1px solid rgba(168,85,247,.28);border-radius:8px;padding:clamp(22px,4vw,38px);width:min(460px,100%);position:relative;transform:translateY(14px);transition:transform .25s;box-shadow:0 0 80px rgba(107,33,214,.28);}
-#modal-ov.open .modal-box{transform:translateY(0);}
-.modal-x{position:absolute;top:14px;right:14px;width:30px;height:30px;background:rgba(107,33,214,.12);border:1px solid var(--border);border-radius:4px;color:var(--pg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;line-height:1;transition:background .2s;}
-.modal-x:hover{background:rgba(107,33,214,.28);}
-.modal-game{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--pb);margin-bottom:7px;}
-.modal-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(18px,4vw,26px);color:var(--w);margin-bottom:18px;}
-.modal-feats{display:flex;flex-direction:column;gap:7px;margin-bottom:22px;}
-.mf{display:flex;align-items:center;gap:9px;padding:9px 13px;background:rgba(107,33,214,.07);border:1px solid var(--border2);border-radius:4px;}
-.mf-dot{width:5px;height:5px;border-radius:50%;background:var(--pb);flex-shrink:0;}
-.mf-text{font-size:clamp(11px,2vw,13px);color:rgba(196,181,253,.65);}
-.modal-note{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.1em;color:rgba(196,181,253,.22);text-align:center;}
+  font-family:'Space Mono',monospace;
+  font-size:clamp(8px,2vw,10px);
+  letter-spacing:.28em;
+  text-transform:uppercase;
 
-/* ── FOOTER ── */
-footer{border-top:1px solid var(--border);padding:clamp(28px,5vw,48px) clamp(18px,6vw,60px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;background:rgba(9,5,15,.97);}
-.f-logo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(15px,3vw,20px);letter-spacing:.06em;color:var(--pb);}
-.f-note{font-family:'Space Mono',monospace;font-size:clamp(7px,1.5vw,9px);letter-spacing:.13em;color:rgba(196,181,253,.18);text-align:center;}
+  color:rgba(196,181,253,.3);
+}
+
+.l-footer em{
+  color:var(--pb);
+  font-style:normal;
+}
+
+/* APP */
+
+#app{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .9s ease;
+}
+
+#app.on{
+  opacity:1;
+  pointer-events:all;
+}
+
+/* NAV */
+
+nav{
+  position:sticky;
+  top:0;
+  z-index:200;
+
+  height:62px;
+
+  padding:0 clamp(18px,5vw,48px);
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  background:rgba(9,5,15,.82);
+  border-bottom:1px solid var(--border);
+
+  backdrop-filter:blur(24px) saturate(1.4);
+}
+
+.nav-logo{
+  font-family:'Montserrat',sans-serif;
+  font-weight:900;
+  font-size:19px;
+  letter-spacing:.08em;
+
+  color:var(--pb);
+}
+
+.nav-logo span{
+  color:var(--w);
+}
+
+.nav-links{
+  display:flex;
+  gap:clamp(14px,3vw,30px);
+
+  list-style:none;
+}
+
+.nav-links a{
+  text-decoration:none;
+
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+
+  color:var(--off);
+
+  transition:.2s;
+}
+
+.nav-links a:hover{
+  color:var(--pg);
+}
+
+.nav-pill{
+  white-space:nowrap;
+
+  padding:6px 14px;
+  border:1px solid var(--border);
+  border-radius:99px;
+
+  background:rgba(107,33,214,.1);
+
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:.15em;
+
+  color:var(--pb);
+}
+
+@media(max-width:580px){
+  .nav-links{
+    display:none;
+  }
+}
+
+/* HERO */
+
+.hero{
+  position:relative;
+  overflow:hidden;
+
+  min-height:92vh;
+
+  padding:80px clamp(18px,6vw,60px) 60px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+}
+
+.hero-orb{
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+  filter:blur(90px);
+}
+
+.hero-orb.a{
+  width:min(580px,90vw);
+  height:min(580px,90vw);
+
+  top:-12%;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  background:radial-gradient(
+    circle,
+    rgba(107,33,214,.17),
+    transparent 70%
+  );
+}
+
+.hero-orb.b{
+  width:260px;
+  height:260px;
+
+  bottom:8%;
+  right:-4%;
+
+  background:radial-gradient(
+    circle,
+    rgba(168,85,247,.1),
+    transparent 70%
+  );
+}
+
+.hero-eye{
+  position:relative;
+  z-index:1;
+
+  margin-bottom:18px;
+
+  font-family:'Space Mono',monospace;
+  font-size:clamp(9px,2vw,11px);
+  letter-spacing:.4em;
+  text-transform:uppercase;
+
+  color:var(--pb);
+}
+
+.hero-h1{
+  position:relative;
+  z-index:1;
+
+  line-height:.94;
+
+  font-family:'Montserrat',sans-serif;
+  font-weight:900;
+  font-size:clamp(52px,12vw,150px);
+  letter-spacing:.02em;
+}
+
+.hero-h1 .acc{
+  color:var(--pb);
+}
+
+.hero-p{
+  max-width:620px;
+
+  margin-top:24px;
+
+  line-height:1.9;
+
+  font-size:clamp(13px,2vw,15px);
+
+  color:var(--off);
+}
+
+.hero-cta{
+  margin-top:44px;
+
+  display:flex;
+  flex-wrap:wrap;
+  gap:11px;
+  justify-content:center;
+}
+
+.btn-p,
+.btn-g{
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+  padding:13px 34px;
+  border-radius:4px;
+
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+
+  transition:.2s;
+}
+
+.btn-p{
+  border:none;
+
+  background:linear-gradient(
+    135deg,
+    var(--pc),
+    var(--pb)
+  );
+
+  color:var(--w);
+
+  box-shadow:0 0 38px rgba(107,33,214,.42);
+}
+
+.btn-p:hover{
+  transform:translateY(-2px);
+}
+
+.btn-g{
+  border:1px solid rgba(168,85,247,.45);
+
+  background:transparent;
+
+  color:var(--pg);
+}
+
+.btn-g:hover{
+  background:rgba(107,33,214,.12);
+  transform:translateY(-2px);
+}
+
+/* REVEAL */
+
+.reveal{
+  opacity:0;
+  transform:translateY(32px);
+
+  transition:
+    opacity .7s ease,
+    transform .7s ease;
+}
+
+.reveal.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.rd1{transition-delay:.1s;}
+.rd2{transition-delay:.2s;}
+.rd3{transition-delay:.3s;}
+.rd4{transition-delay:.4s;}
+.rd5{transition-delay:.5s;}
+
+/* FEATURES */
+
+.feat-sec{
+  max-width:1180px;
+  margin:0 auto;
+
+  padding:100px clamp(18px,6vw,60px);
+}
+
+.sec-eye{
+  margin-bottom:14px;
+
+  font-family:'Space Mono',monospace;
+  font-size:clamp(9px,2vw,11px);
+  letter-spacing:.38em;
+  text-transform:uppercase;
+
+  color:var(--pb);
+}
+
+.sec-h{
+  margin-bottom:18px;
+
+  line-height:1;
+
+  font-family:'Montserrat',sans-serif;
+  font-weight:900;
+  font-size:clamp(30px,6vw,66px);
+}
+
+.sec-h .dim{
+  color:rgba(196,181,253,.32);
+}
+
+.sec-p{
+  max-width:620px;
+
+  line-height:1.8;
+
+  font-size:clamp(13px,2vw,15px);
+
+  color:var(--off);
+}
+
+.main-premium{
+  position:relative;
+  overflow:hidden;
+
+  margin-top:60px;
+
+  border:1px solid rgba(250,204,21,.18);
+  border-radius:14px;
+
+  padding:50px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(250,204,21,.08),
+      rgba(107,33,214,.15)
+    );
+}
+
+.main-premium::before{
+  content:'';
+  position:absolute;
+  inset:0;
+
+  background:radial-gradient(
+    circle at top,
+    rgba(250,204,21,.12),
+    transparent 65%
+  );
+
+  pointer-events:none;
+}
+
+.main-premium h3{
+  font-family:'Montserrat',sans-serif;
+  font-weight:900;
+  font-size:clamp(28px,5vw,52px);
+
+  margin-bottom:18px;
+}
+
+.main-premium p{
+  max-width:760px;
+
+  line-height:1.9;
+
+  font-size:15px;
+
+  color:rgba(255,255,255,.72);
+}
+
+.feat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));
+
+  gap:1px;
+
+  margin-top:28px;
+
+  border:1px solid var(--border2);
+  background:var(--border2);
+}
+
+.fc{
+  position:relative;
+  overflow:hidden;
+
+  padding:32px 26px;
+
+  background:var(--p0);
+
+  transition:.25s;
+}
+
+.fc:hover{
+  background:rgba(107,33,214,.07);
+}
+
+.fn{
+  margin-bottom:14px;
+
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:.2em;
+
+  color:rgba(168,85,247,.25);
+}
+
+.ft{
+  margin-bottom:9px;
+
+  font-family:'Montserrat',sans-serif;
+  font-weight:700;
+  font-size:17px;
+}
+
+.fd{
+  line-height:1.8;
+  font-size:13px;
+
+  color:var(--off);
+}
+
+.fb{
+  display:inline-block;
+
+  margin-top:14px;
+
+  padding:3px 10px;
+  border-radius:99px;
+
+  background:rgba(107,33,214,.09);
+  border:1px solid rgba(168,85,247,.22);
+
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+
+  color:var(--pb);
+}
+
+/* GAMES */
+
+.games-sec{
+  padding:100px clamp(18px,6vw,60px);
+}
+
+.games-inner{
+  max-width:1080px;
+  margin:0 auto;
+}
+
+.games-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+
+  gap:14px;
+
+  margin-top:58px;
+}
+
+@media(max-width:860px){
+  .games-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+.gc{
+  position:relative;
+  overflow:hidden;
+
+  padding:26px;
+  border-radius:6px;
+
+  background:linear-gradient(
+    145deg,
+    rgba(26,10,46,.65),
+    rgba(9,5,15,.88)
+  );
+
+  border:1px solid var(--border);
+
+  transition:.25s;
+}
+
+.gc:hover{
+  transform:translateY(-4px);
+  border-color:rgba(168,85,247,.38);
+  box-shadow:0 10px 44px rgba(107,33,214,.18);
+}
+
+.gc-dot{
+  position:absolute;
+  top:16px;
+  right:16px;
+
+  width:6px;
+  height:6px;
+  border-radius:50%;
+
+  background:#4ade80;
+  box-shadow:0 0 7px #4ade80;
+}
+
+.gc-name{
+  margin-bottom:3px;
+
+  font-family:'Montserrat',sans-serif;
+  font-weight:900;
+  font-size:18px;
+}
+
+.gc-cnt{
+  margin-bottom:12px;
+
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+
+  color:var(--pb);
+}
+
+.gc-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+
+  margin-bottom:16px;
+}
+
+.gtag{
+  padding:3px 7px;
+  border-radius:2px;
+
+  background:rgba(107,33,214,.13);
+  border:1px solid var(--border2);
+
+  font-size:9px;
+  font-family:'Space Mono',monospace;
+
+  color:rgba(196,181,253,.45);
+}
+
+.gc-btn{
+  width:100%;
+
+  padding:9px 14px;
+  border-radius:3px;
+
+  cursor:pointer;
+
+  background:transparent;
+  border:1px solid rgba(168,85,247,.28);
+
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+
+  color:var(--pb);
+
+  transition:.2s;
+}
+
+.gc-btn:hover{
+  background:rgba(107,33,214,.13);
+}
+
+/* MARQUEE */
+
+.marquee-strip{
+  overflow:hidden;
+
+  margin-top:80px;
+
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+
+  background:rgba(26,10,46,.25);
+
+  padding:18px 0;
+}
+
+.marquee-inner{
+  display:flex;
+  gap:60px;
+  width:max-content;
+
+  animation:marq 22s linear infinite;
+}
+
+@keyframes marq{
+  to{
+    transform:translateX(-50%);
+  }
+}
+
+.mi{
+  white-space:nowrap;
+
+  display:flex;
+  align-items:center;
+  gap:14px;
+
+  font-family:'Montserrat',sans-serif;
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:.08em;
+
+  color:rgba(255,255,255,.42);
+}
+
+.mi .dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+
+  background:var(--pb);
+}
+
+/* ABOUT */
+
+.about-sec{
+  max-width:1060px;
+  margin:0 auto;
+
+  padding:100px clamp(18px,6vw,60px);
+}
+
+.about-box{
+  border:1px solid var(--border);
+  border-radius:12px;
+
+  padding:48px;
+
+  background:linear-gradient(
+    145deg,
+    rgba(26,10,46,.55),
+    rgba(9,5,15,.9)
+  );
+}
+
+.about-box h2{
+  line-height:1;
+
+  font-family:'Montserrat',sans-serif;
+  font-weight:900;
+  font-size:clamp(34px,7vw,74px);
+
+  margin-bottom:20px;
+}
+
+.about-box h2 span{
+  color:var(--pb);
+}
+
+.about-box p{
+  max-width:760px;
+
+  line-height:1.9;
+  font-size:15px;
+
+  color:rgba(255,255,255,.68);
+}
+
+/* MODAL */
+
+#modal-ov,
+#plans-modal{
+  position:fixed;
+  inset:0;
+  z-index:4000;
+
+  opacity:0;
+  pointer-events:none;
+
+  padding:18px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:rgba(9,5,15,.88);
+
+  transition:opacity .25s;
+  backdrop-filter:blur(18px);
+}
+
+#modal-ov.open,
+#plans-modal.open{
+  opacity:1;
+  pointer-events:all;
+}
+
+.modal-box{
+  width:min(460px,100%);
+
+  position:relative;
+
+  transform:translateY(14px);
+  transition:transform .25s;
+
+  border-radius:8px;
+  border:1px solid rgba(168,85,247,.28);
+
+  padding:38px;
+
+  background:var(--p1);
+
+  box-shadow:0 0 80px rgba(107,33,214,.28);
+}
+
+#modal-ov.open .modal-box,
+#plans-modal.open .modal-box{
+  transform:translateY(0);
+}
+
+.modal-x{
+  position:absolute;
+  top:14px;
+  right:14px;
+
+  width:30px;
+  height:30px;
+
+  cursor:pointer;
+
+  border-radius:4px;
+
+  background:rgba(107,33,214,.12);
+  border:1px solid var(--border);
+
+  color:var(--pg);
+}
+
+.modal-game{
+  margin-bottom:7px;
+
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+
+  color:var(--pb);
+}
+
+.modal-title{
+  margin-bottom:18px;
+
+  font-family:'Montserrat',sans-serif;
+  font-weight:900;
+  font-size:26px;
+}
+
+.modal-feats{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.mf{
+  display:flex;
+  align-items:center;
+  gap:9px;
+
+  padding:9px 13px;
+  border-radius:4px;
+
+  background:rgba(107,33,214,.07);
+  border:1px solid var(--border2);
+}
+
+.mf-dot{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+
+  background:var(--pb);
+}
+
+.mf-text{
+  font-size:13px;
+  color:rgba(196,181,253,.65);
+}
+
+/* PLANS */
+
+.plans-wrap{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+
+  margin-top:24px;
+}
+
+@media(max-width:760px){
+  .plans-wrap{
+    grid-template-columns:1fr;
+  }
+}
+
+.plan-card{
+  position:relative;
+  overflow:hidden;
+
+  border-radius:12px;
+
+  padding:28px;
+}
+
+.plan-card h3{
+  font-family:'Montserrat',sans-serif;
+  font-weight:900;
+  font-size:28px;
+
+  margin-bottom:8px;
+}
+
+.plan-price{
+  margin-bottom:20px;
+
+  font-family:'Space Mono',monospace;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+
+  opacity:.85;
+}
+
+.plan-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.plan-item{
+  padding:10px 12px;
+  border-radius:6px;
+
+  background:rgba(0,0,0,.14);
+
+  font-size:13px;
+}
+
+.plan-gold{
+  background:linear-gradient(
+    145deg,
+    rgba(250,204,21,.22),
+    rgba(245,158,11,.12)
+  );
+
+  border:1px solid rgba(250,204,21,.3);
+}
+
+.plan-free{
+  background:linear-gradient(
+    145deg,
+    rgba(168,85,247,.2),
+    rgba(250,204,21,.08)
+  );
+
+  border:1px solid rgba(168,85,247,.28);
+}
+
+/* FOOTER */
+
+footer{
+  padding:42px 24px;
+
+  border-top:1px solid var(--border);
+
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+
+  background:rgba(9,5,15,.97);
+}
+
+.f-logo{
+  font-family:'Montserrat',sans-serif;
+  font-weight:900;
+  font-size:20px;
+
+  color:var(--pb);
+}
+
+.f-note{
+  text-align:center;
+
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:.13em;
+
+  color:rgba(196,181,253,.18);
+}
 </style>
 </head>
+
 <body>
 
 <!-- LOADER -->
+
 <div id="loader">
-  <div id="lparts"></div>
-  <div class="lc tl"></div><div class="lc tr"></div><div class="lc bl"></div><div class="lc br"></div>
-  <div id="adj-track"><span class="adj-word" id="adjW"></span></div>
-  <div class="l-wrap" id="lWrap">
-    <div class="l-base" id="lBase">KYO HUB</div>
+
+  <div class="lc tl"></div>
+  <div class="lc tr"></div>
+  <div class="lc bl"></div>
+  <div class="lc br"></div>
+
+  <div id="adj-track">
+    <span class="adj-word" id="adjW"></span>
+  </div>
+
+  <div class="l-wrap">
+
+    <div class="l-base" id="lBase">
+      KYO HUB
+    </div>
+
     <div class="l-canvas-wrap" id="lCW">
       <canvas id="wc"></canvas>
-      <div class="l-fill">KYO HUB</div>
+
+      <div class="l-fill">
+        KYO HUB
+      </div>
     </div>
+
   </div>
-  <div class="l-progress"><div class="l-pfill" id="lPF"></div></div>
-  <div class="l-footer"><em>Premium Scripts</em> &nbsp;·&nbsp; Multi-Game Hub &nbsp;·&nbsp; Lua Automation</div>
+
+  <div class="l-progress">
+    <div class="l-pfill" id="lPF"></div>
+  </div>
+
+  <div class="l-footer">
+    <em>Premium Scripts</em>
+    ·
+    Multi-Game Hub
+    ·
+    Lua Automation
+  </div>
+
 </div>
 
-<!-- MODAL -->
+<!-- GAME MODAL -->
+
 <div id="modal-ov">
+
   <div class="modal-box">
-    <button class="modal-x" id="mClose">×</button>
+
+    <button class="modal-x" id="mClose">
+      ×
+    </button>
+
     <div class="modal-game" id="mGame"></div>
-    <div class="modal-title">Feature List</div>
+
+    <div class="modal-title">
+      Feature List
+    </div>
+
     <div class="modal-feats" id="mFeats"></div>
-    <div class="modal-note">More features coming soon — stay tuned.</div>
+
   </div>
+
+</div>
+
+<!-- PLANS MODAL -->
+
+<div id="plans-modal">
+
+  <div class="modal-box">
+
+    <button class="modal-x" id="plansClose">
+      ×
+    </button>
+
+    <div class="modal-game">
+      KYO HUB PLANS
+    </div>
+
+    <div class="modal-title">
+      Choose Your Version
+    </div>
+
+    <div class="plans-wrap">
+
+      <div class="plan-card plan-gold">
+
+        <h3>Premium</h3>
+
+        <div class="plan-price">
+          only $5
+        </div>
+
+        <div class="plan-list">
+          <div class="plan-item">More supported games</div>
+          <div class="plan-item">Exclusive OP features</div>
+          <div class="plan-item">Faster updates</div>
+          <div class="plan-item">Advanced automation systems</div>
+          <div class="plan-item">Premium-only modules</div>
+        </div>
+
+      </div>
+
+      <div class="plan-card plan-free">
+
+        <h3>Free</h3>
+
+        <div class="plan-price">
+          forever free
+        </div>
+
+        <div class="plan-list">
+          <div class="plan-item">Core hub experience</div>
+          <div class="plan-item">Stable gameplay features</div>
+          <div class="plan-item">Community updates</div>
+          <div class="plan-item">Easy access setup</div>
+          <div class="plan-item">Multi-game support</div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
 </div>
 
 <!-- APP -->
+
 <div id="app">
+
   <nav>
-    <div class="nav-logo">KYO<span> HUB</span></div>
+
+    <div class="nav-logo">
+      KYO <span>HUB</span>
+    </div>
+
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
       <li><a href="#games">Games</a></li>
       <li><a href="#about">About</a></li>
     </ul>
-    <div class="nav-pill">v2.0 &nbsp;·&nbsp; Active</div>
+
+    <div class="nav-pill">
+      v2.0 · Active
+    </div>
+
   </nav>
 
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-orb a"></div><div class="hero-orb b"></div><div class="hero-orb c"></div>
-    <p class="hero-eye reveal">Roblox Script Hub</p>
-    <h1 class="hero-h1 reveal rd1">KYO<br><span class="acc">HUB</span></h1>
+
+  <section class="hero">
+
+    <div class="hero-orb a"></div>
+    <div class="hero-orb b"></div>
+
+    <p class="hero-eye reveal">
+      Roblox Script Hub
+    </p>
+
+    <h1 class="hero-h1 reveal rd1">
+      KYO
+      <br>
+      <span class="acc">HUB</span>
+    </h1>
+
     <p class="hero-p reveal rd2">
-Two versions available: <span class="gold">Premium — only $5</span> and Free. Same clean experience, choose the version that fits you best.
-</p>
+      Powerful multi-game scripting hub with premium quality execution,
+      smooth automation and constant updates built for serious players.
+    </p>
+
     <div class="hero-cta reveal rd3">
-      <a href="https://github.com/zKiroNany/Kyo-Hub" class="btn-p" target="_blank">Get on GitHub</a>
-      <a href="#games" class="btn-g">View Games</a>
-    </div>
-  </div>
 
-  <!-- MARQUEE -->
-  <div class="marquee-strip"><div class="marquee-inner" id="marqI"></div></div>
+      <a href="#games" class="btn-p">
+        View Games
+      </a>
 
-  <!-- STATS -->
-  <div class="stats-sec">
-    <div class="stats-grid">
-      <div class="sc reveal"><div class="snum" data-count="7">0</div><div class="slbl">Games Supported</div></div>
-      <div class="sc reveal rd1"><div class="snum" data-count="60">0</div><div class="slbl">Automation Features</div></div>
-      <div class="snum">$5</div>
-<div class="slbl">Premium Access</div>
-      <div class="sc reveal rd3"><div class="snum">∞</div><div class="slbl">Community Driven</div></div>
-    </div>
-  </div>
+      <button class="btn-g" id="openPlans">
+        View Plans
+      </button>
 
-  <!-- FEATURES -->
-  <section id="features">
-    <div class="feat-sec">
-      <p class="sec-eye reveal">// why kyo hub</p>
-      <h2 class="sec-h reveal rd1">Built to be<br><span class="dim">Different</span></h2>
-      <p class="sec-p reveal rd2">Not just another script. Kyo Hub is engineered to be fast, stable, and invisible — doing exactly what you need without getting in the way.</p>
-      <div class="feat-grid">
-        <div class="fc reveal"><div class="fn">01</div><div class="ft">Blazing Fast</div><div class="fd">Frame-perfect execution on every feature. Zero lag on low-end devices. Optimized loops that respect your FPS and never throttle your game.</div><span class="fb">Performance</span></div>
-       <div class="ft">Free & <span class="gold">Premium</span></div>
-<div class="fd">
-Use the completely free version or unlock the <span class="gold">Premium version for only $5</span> with enhanced features, faster updates and exclusive modules.
-</div>
-<span class="fb">Plans</span>
-        <div class="fc reveal rd2"><div class="fn">03</div><div class="ft">Rock Solid Stability</div><div class="fd">Engineered with error isolation. If one feature breaks, nothing else goes down. Smart recovery keeps your session running no matter what.</div><span class="fb">Reliability</span></div>
-        <div class="fc reveal rd3"><div class="fn">04</div><div class="ft">Multi-Game Ready</div><div class="fd">One loader, seven games and growing. Each game module is fully isolated — updates to one never break another. Switch games, same hub.</div><span class="fb">Versatility</span></div>
-        <div class="fc reveal rd4"><div class="fn">05</div><div class="ft">Deep Automation</div><div class="fd">From farming and grinding to rolling and collecting — every repetitive task is handled automatically, so you can focus on what actually matters.</div><span class="fb">Automation</span></div>
-        <div class="fc reveal rd5"><div class="fn">06</div><div class="ft">Clean UI</div><div class="fd">A polished, organized interface with save profiles, config persistence, and mobile support. Looks premium. Feels premium. Costs nothing.</div><span class="fb">Design</span></div>
-        <div class="fc reveal"><div class="fn">07</div><div class="ft">Instant Notifications</div><div class="fd">Discord webhook integration with rich embeds. Get pinged when rare items drop, rolls land, or farming targets complete — in real time.</div><span class="fb">Alerts</span></div>
-        <div class="fc reveal rd1"><div class="fn">08</div><div class="ft">Actively Updated</div><div class="fd">Game updates don't leave you stranded. Kyo Hub is maintained by an active developer and patched regularly after every major game update.</div><span class="fb">Maintenance</span></div>
-        <div class="fc reveal rd2"><div class="fn">09</div><div class="ft">Combat Ready</div><div class="fd">Advanced targeting, aim assistance, and mobility features for competitive games. Tunable, toggleable, and built to be smooth — not janky.</div><span class="fb">Combat</span></div>
-      </div>
     </div>
+
   </section>
 
-  <!-- GAMES -->
-  <section id="games">
-    <div class="games-sec">
-      <div class="games-inner">
-        <p class="sec-eye reveal">// supported games</p>
-        <h2 class="sec-h reveal rd1">One Hub.<br><span class="dim">Every Game.</span></h2>
-        <p class="sec-p reveal rd2">Each game has its own dedicated module, updated independently. Click a game to see what's inside.</p>
-        <div class="games-grid" id="gGrid"></div>
+  <!-- FEATURES -->
+
+  <section id="features">
+
+    <div class="feat-sec">
+
+      <p class="sec-eye reveal">
+        // why kyo hub
+      </p>
+
+      <h2 class="sec-h reveal rd1">
+        Built to be
+        <br>
+        <span class="dim">Different</span>
+      </h2>
+
+      <div class="main-premium reveal rd2">
+
+        <h3>
+          Premium Quality Without Compromise
+        </h3>
+
+        <p>
+          Kyo Hub was designed to feel polished, responsive and powerful.
+          Every system is optimized for smooth execution, clean visuals,
+          advanced automation and reliable performance across multiple games.
+          Premium users unlock even more exclusive modules, stronger farming systems,
+          additional supported games and faster updates.
+        </p>
+
       </div>
+
+      <div class="feat-grid">
+
+        <div class="fc reveal">
+          <div class="fn">01</div>
+          <div class="ft">Blazing Fast</div>
+          <div class="fd">
+            Optimized execution with lightweight systems designed
+            for stable FPS and smooth gameplay.
+          </div>
+          <span class="fb">Performance</span>
+        </div>
+
+        <div class="fc reveal rd1">
+          <div class="fn">02</div>
+          <div class="ft">Premium Features</div>
+          <div class="fd">
+            Unlock stronger automation, more supported games,
+            exclusive modules and advanced systems with Premium.
+          </div>
+          <span class="fb">Premium</span>
+        </div>
+
+        <div class="fc reveal rd2">
+          <div class="fn">03</div>
+          <div class="ft">Stable Systems</div>
+          <div class="fd">
+            Smart recovery and isolated modules keep the script
+            stable even after updates or errors.
+          </div>
+          <span class="fb">Reliability</span>
+        </div>
+
+        <div class="fc reveal rd3">
+          <div class="fn">04</div>
+          <div class="ft">Multi-Game Ready</div>
+          <div class="fd">
+            One hub supporting multiple games with dedicated
+            systems for every experience.
+          </div>
+          <span class="fb">Versatility</span>
+        </div>
+
+        <div class="fc reveal rd4">
+          <div class="fn">05</div>
+          <div class="ft">Deep Automation</div>
+          <div class="fd">
+            Farming, rolling, grinding and repetitive gameplay
+            fully automated for efficiency.
+          </div>
+          <span class="fb">Automation</span>
+        </div>
+
+        <div class="fc reveal rd5">
+          <div class="fn">06</div>
+          <div class="ft">Clean Interface</div>
+          <div class="fd">
+            Smooth UI design with organized controls,
+            mobile support and polished visuals.
+          </div>
+          <span class="fb">Design</span>
+        </div>
+
+      </div>
+
     </div>
+
   </section>
 
   <!-- ABOUT -->
+
   <section id="about">
+
     <div class="about-sec">
-      <div>
-        <p class="sec-eye reveal">// the project</p>
-        <h2 class="sec-h reveal rd1">Made by a<br><span class="dim">Developer,</span><br>for Players.</h2>
-        <p class="sec-p reveal rd2" style="margin-top:14px;">
-Kyo Hub is a solo passion project focused on quality and constant updates. Use the free version or unlock the <span class="gold">Premium edition for just $5</span>.
-</p>
-        <div style="margin-top:28px;" class="reveal rd3"><a href="https://github.com/zKiroNany/Kyo-Hub" class="btn-p" target="_blank">View Source on GitHub</a></div>
+
+      <div class="about-box reveal">
+
+        <p class="sec-eye">
+          // the project
+        </p>
+
+        <h2>
+          Made by
+          <br>
+          a <span>Single Developer</span>,
+          <br>
+          for Players.
+        </h2>
+
+        <p>
+          Kyo Hub is entirely developed and maintained by one solo developer.
+          Every feature, update, UI improvement and optimization is handcrafted
+          with focus on quality, stability and long-term support.
+          The project continues to grow with constant updates,
+          new supported games and premium systems.
+        </p>
+
       </div>
-      <div class="ab-grid reveal rd2">
-        <div class="ab-cell"><div class="ab-icon">⚡</div><div class="ab-lbl">Speed</div><div class="ab-val">Frame-perfect</div></div>
-        <div class="ab-cell"><div class="ab-icon">🔒</div><div class="ab-lbl">Access</div><div class="ab-val">Always Free</div></div>
-        <div class="ab-cell"><div class="ab-icon">🎮</div><div class="ab-lbl">Games</div><div class="ab-val">7+ Active</div></div>
-        <div class="ab-cell"><div class="ab-icon">🔔</div><div class="ab-lbl">Alerts</div><div class="ab-val">Discord Live</div></div>
-      </div>
+
     </div>
+
+  </section>
+
+  <!-- GAMES -->
+
+  <section id="games">
+
+    <div class="games-sec">
+
+      <div class="games-inner">
+
+        <p class="sec-eye reveal">
+          // supported games
+        </p>
+
+        <h2 class="sec-h reveal rd1">
+          One Hub.
+          <br>
+          <span class="dim">Every Game.</span>
+        </h2>
+
+        <p class="sec-p reveal rd2">
+          Each game has its own dedicated module,
+          updated independently with optimized systems and unique features.
+        </p>
+
+        <div class="games-grid" id="gGrid"></div>
+
+        <!-- MARQUEE MOVED HERE -->
+
+        <div class="marquee-strip reveal rd3">
+
+          <div class="marquee-inner" id="marqI"></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
   </section>
 
   <footer>
-    <div class="f-logo">KYO HUB</div>
-    <div class="f-note">For educational purposes &nbsp;·&nbsp; Lua Scripting Project &nbsp;·&nbsp; © 2025 Kayke</div>
-    <div class="f-note">github.com/zKiroNany/Kyo-Hub</div>
+
+    <div class="f-logo">
+      KYO HUB
+    </div>
+
+    <div class="f-note">
+      Lua scripting project · built by one developer · © 2025 Kayke
+    </div>
+
   </footer>
+
 </div>
 
 <script>
-/* ─── DATA ─── */
-const GAMES=[
-  {name:'Sailor Piece',cnt:'15+ features',tags:['Auto Farm','Auto Boss','Auto LVL','NPC TP','Pity Farm'],feats:['Auto Grind Kill XP','Auto Boss Farm','Auto LVL Grinding','Boss Pity System','NPC Teleport','Auto Farm Selected Bosses','TweenSpeed Control','Priority System (3 levels)','Auto Build Swap']},
-  {name:'Stands Upright',cnt:'12+ features',tags:['Auto Roll','Auto Lair','Auto Skills','Collect Items'],feats:['Auto Roll (4 Modes)','Auto Collect Items','Auto Lair Farm','Auto Join Lair','Auto Skills','Auto Easter Egg','Webhook on Rare Stands','Slot-aware Stand Storage']},
-  {name:'BloxStrike',cnt:'10+ features',tags:['No Spread','Silent Aim','Bhop','Skin Changer'],feats:['No Spread','No Recoil','Silent Aim','Auto Fire','Bunnyhop','SpinBot','Air Strafe','Skin Randomizer','Head Hitbox Extender']},
-  {name:'ABA',cnt:'8+ features',tags:['Gold Farm','Auto Vote','Flick Aim','Mine ESP'],feats:['Gold Farming System','Auto Vote','Flick Silent Aim','Triggerbot','Bunnyhop','Mine & Trap ESP','Danger Radius Visual','Discord Webhook Alerts']},
-  {name:'Jood Piece',cnt:'8+ features',tags:['Auto Roll','Auto M1','Webhook','Island Load'],feats:['Auto Roll','Auto M1','Auto Stats','Auto Equip','NPC Teleport','Auto Clicker','Code Redemption','Discord Webhook']},
-  {name:'Counter Blox',cnt:'7+ features',tags:['ESP','Chams','Auto Fire','FOV Circle'],feats:['Double-Box ESP','HP Bars','Name & Distance Labels','Weapon Labels','Tracers','Chams','FOV Circle']},
+
+/* DATA */
+
+const GAMES = [
+
+{
+  name:'Sailor Piece',
+  cnt:'15+ features',
+  tags:['Auto Farm','Auto Boss','Auto LVL'],
+  feats:[
+    'Auto Grind Kill XP',
+    'Auto Boss Farm',
+    'NPC Teleport',
+    'TweenSpeed Control'
+  ]
+},
+
+{
+  name:'Stands Upright',
+  cnt:'12+ features',
+  tags:['Auto Roll','Auto Skills','Collect'],
+  feats:[
+    'Auto Roll',
+    'Webhook on Rare Stands',
+    'Auto Skills',
+    'Auto Lair Farm'
+  ]
+},
+
+{
+  name:'BloxStrike',
+  cnt:'10+ features',
+  tags:['Silent Aim','Bhop','No Spread'],
+  feats:[
+    'Silent Aim',
+    'No Recoil',
+    'Bunnyhop',
+    'SpinBot'
+  ]
+}
+
 ];
-const MARQUEE=['Fast Execution','Always Free','Multi-Game','Stable & Reliable','Auto Farm','Auto Roll','Discord Alerts','Actively Maintained','No Keys Required','Premium Quality','Open Source','Mobile Friendly'];
-const ADJS=['Premium','Reliable','Fast','Stable','Free','Powerful','Smooth','Precise'];
 
-/* ─── PARTICLES ─── */
-const pc=document.getElementById('lparts');
-for(let i=0;i<44;i++){const s=document.createElement('div');s.className='lp';s.style.cssText=`left:${Math.random()*100}%;top:${28+Math.random()*60}%;--d:${3+Math.random()*5}s;--del:${Math.random()*5}s;--dx:${(Math.random()-.5)*90}px;--dy:${-70-Math.random()*130}px;`;pc.appendChild(s);}
+const MARQUEE = [
+  'PREMIUM QUALITY',
+  'MULTI GAME SUPPORT',
+  'FAST EXECUTION',
+  'ADVANCED AUTOMATION',
+  'SOLO DEVELOPED',
+  'CONSTANT UPDATES',
+  'EXCLUSIVE FEATURES',
+  'SMOOTH UI EXPERIENCE'
+];
 
-/* ─── WAVE CANVAS ─── */
-const cvs=document.getElementById('wc');
-const ctx=cvs.getContext('2d');
-let fillT=0,fillC=0,wOff=0,rafId;
-function resizeCvs(){
-  const r=document.getElementById('lBase').getBoundingClientRect();
-  cvs.width=r.width*devicePixelRatio;cvs.height=r.height*devicePixelRatio;
-  cvs.style.width=r.width+'px';cvs.style.height=r.height+'px';
-  ctx.scale(devicePixelRatio,devicePixelRatio);
-}
-function drawWave(){
-  const w=cvs.width/devicePixelRatio,h=cvs.height/devicePixelRatio;
-  ctx.clearRect(0,0,w,h);
-  fillC+=(fillT-fillC)*.038;
-  const sy=h-(fillC*h),amp=5+fillC*9,freq=.021;
-  wOff+=1.5;
-  ctx.beginPath();ctx.moveTo(0,h);
-  for(let x=0;x<=w;x+=2){
-    const y=sy+Math.sin((x*freq)+wOff*.05)*amp+Math.sin((x*freq*1.75)+wOff*.08)*(amp*.45);
-    ctx.lineTo(x,y);
-  }
-  ctx.lineTo(w,h);ctx.closePath();
-  const g=ctx.createLinearGradient(0,sy-amp,0,h);
-  g.addColorStop(0,'rgba(192,132,252,0.93)');g.addColorStop(0.4,'rgba(168,85,247,0.88)');g.addColorStop(1,'rgba(107,33,214,0.82)');
-  ctx.fillStyle=g;ctx.fill();
-  rafId=requestAnimationFrame(drawWave);
-}
+const ADJS = [
+  'Premium',
+  'Reliable',
+  'Fast',
+  'Stable',
+  'Powerful'
+];
 
-/* ─── LOADER SEQUENCE ─── */
-const adjEl=document.getElementById('adjW');
-const lCW=document.getElementById('lCW');
-const lBase=document.getElementById('lBase');
-  function applyTextMask(){
-  const txt = lBase.textContent.trim();
-  const svg = `
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300">
-    <style>
-      text{
-        font-family:Montserrat,sans-serif;
-        font-weight:900;
-        font-size:190px;
-        letter-spacing:.03em;
-      }
-    </style>
-    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white">
-      ${txt}
-    </text>
-  </svg>`;
+/* LOADER */
 
-  const url = `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+const adjEl = document.getElementById('adjW');
+const lCW = document.getElementById('lCW');
+const lPF = document.getElementById('lPF');
+const loader = document.getElementById('loader');
+const app = document.getElementById('app');
 
-  lCW.style.webkitMaskImage = url;
-  lCW.style.maskImage = url;
-  lCW.style.webkitMaskRepeat = 'no-repeat';
-  lCW.style.maskRepeat = 'no-repeat';
-  lCW.style.webkitMaskPosition = 'center';
-  lCW.style.maskPosition = 'center';
-  lCW.style.webkitMaskSize = 'contain';
-  lCW.style.maskSize = 'contain';
-}
-const lWrap=document.getElementById('lWrap');
-const lPF=document.getElementById('lPF');
-const loader=document.getElementById('loader');
-const app=document.getElementById('app');
-let ai=0;
+let ai = 0;
 
 function runAdj(){
-  if(ai>=ADJS.length){
-    lBase.classList.add('glow');
+
+  if(ai >= ADJS.length){
+
     setTimeout(()=>{
-      lWrap.classList.add('pop');
+
+      loader.classList.add('done');
+      app.classList.add('on');
+
+      document
+      .querySelectorAll('.hero .reveal')
+      .forEach(el=>el.classList.add('visible'));
+
       setTimeout(()=>{
-        cancelAnimationFrame(rafId);
-        loader.classList.add('done');
-        app.classList.add('on');
-        document.querySelectorAll('.hero .reveal').forEach(el=>el.classList.add('visible'));
-        setTimeout(()=>{loader.style.display='none';},1000);
-      },660);
-    },340);
+        loader.style.display='none';
+      },900);
+
+    },300);
+
     return;
   }
-  adjEl.textContent=ADJS[ai];
-  adjEl.className='adj-word travel';
+
+  adjEl.textContent = ADJS[ai];
+  adjEl.className = 'adj-word travel';
+
   setTimeout(()=>{
-    adjEl.className='adj-word absorb';
-    lWrap.classList.remove('shake');void lWrap.offsetWidth;lWrap.classList.add('shake');
-    fillT=(ai+1)/ADJS.length;
-    const ct=100-Math.round(fillT*100);
-    lCW.style.clipPath=`inset(${ct}% 0% 0% 0%)`;
-    lPF.style.width=Math.round(fillT*100)+'%';
+
+    adjEl.className = 'adj-word absorb';
+
+    const fill = (ai + 1) / ADJS.length;
+
+    lCW.style.clipPath =
+      `inset(${100 - (fill * 100)}% 0% 0% 0%)`;
+
+    lPF.style.width =
+      `${fill * 100}%`;
+
     ai++;
-    const speed = Math.max(120, 475 - (ai * 42));
-setTimeout(runAdj, speed);
+
+    setTimeout(runAdj,300);
+
   },1050);
+
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
-  resizeCvs();
-  applyTextMask();
-  drawWave();
-  setTimeout(runAdj,550);
+
+  runAdj();
+
 });
-window.addEventListener('resize',resizeCvs);
 
-/* ─── MARQUEE ─── */
-const mi=document.getElementById('marqI');
-[...MARQUEE,...MARQUEE].forEach(t=>{const d=document.createElement('div');d.className='mi';d.innerHTML=`<span class="dot"></span>${t}`;mi.appendChild(d);});
+/* MARQUEE */
 
-/* ─── GAMES GRID ─── */
-const gg=document.getElementById('gGrid');
-const delays=['','rd1','rd2','rd3','rd4','rd5'];
+const marqI = document.getElementById('marqI');
+
+[...MARQUEE,...MARQUEE].forEach(t=>{
+
+  const d = document.createElement('div');
+
+  d.className='mi';
+
+  d.innerHTML = `
+    <span class="dot"></span>
+    ${t}
+  `;
+
+  marqI.appendChild(d);
+
+});
+
+/* GAMES */
+
+const gg = document.getElementById('gGrid');
+
 GAMES.forEach((g,i)=>{
-  const tH=g.tags.map(t=>`<span class="gtag">${t}</span>`).join('');
-  const d=document.createElement('div');d.className=`gc reveal ${delays[i%6]}`;
-  d.innerHTML=`<div class="gc-orb"></div><div class="gc-dot"></div><div class="gc-name">${g.name}</div><div class="gc-cnt">${g.cnt}</div><div class="gc-tags">${tH}</div><button class="gc-btn" data-i="${i}"><svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3.5"/><path d="M5 3.5v3M3.5 5h3" stroke-linecap="round"/></svg>View Features</button>`;
+
+  const tH = g.tags
+  .map(t=>`<span class="gtag">${t}</span>`)
+  .join('');
+
+  const d = document.createElement('div');
+
+  d.className='gc reveal';
+
+  d.innerHTML = `
+    <div class="gc-dot"></div>
+
+    <div class="gc-name">
+      ${g.name}
+    </div>
+
+    <div class="gc-cnt">
+      ${g.cnt}
+    </div>
+
+    <div class="gc-tags">
+      ${tH}
+    </div>
+
+    <button class="gc-btn" data-i="${i}">
+      View Features
+    </button>
+  `;
+
   gg.appendChild(d);
+
 });
 
-/* ─── MODAL ─── */
-const ov=document.getElementById('modal-ov');
-const mClose=document.getElementById('mClose');
-const mGame=document.getElementById('mGame');
-const mFeats=document.getElementById('mFeats');
+/* GAME MODAL */
+
+const ov = document.getElementById('modal-ov');
+const mClose = document.getElementById('mClose');
+const mGame = document.getElementById('mGame');
+const mFeats = document.getElementById('mFeats');
 
 gg.addEventListener('click',e=>{
-  const btn=e.target.closest('.gc-btn');if(!btn)return;
-  const g=GAMES[+btn.dataset.i];
-  mGame.textContent=g.name;
-  mFeats.innerHTML=g.feats.map(f=>`<div class="mf"><div class="mf-dot"></div><div class="mf-text">${f}</div></div>`).join('');
-  ov.classList.add('open');document.body.style.overflow='hidden';
+
+  const btn = e.target.closest('.gc-btn');
+
+  if(!btn) return;
+
+  const g = GAMES[+btn.dataset.i];
+
+  mGame.textContent = g.name;
+
+  mFeats.innerHTML = g.feats.map(f=>`
+    <div class="mf">
+      <div class="mf-dot"></div>
+      <div class="mf-text">${f}</div>
+    </div>
+  `).join('');
+
+  ov.classList.add('open');
+
+  document.body.style.overflow='hidden';
+
 });
-function closeMod(){ov.classList.remove('open');document.body.style.overflow='';}
-mClose.addEventListener('click',closeMod);
-ov.addEventListener('click',e=>{if(e.target===ov)closeMod();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMod();});
 
-/* ─── SCROLL REVEAL ─── */
-const obs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
-},{threshold:.1});
-document.querySelectorAll('.reveal').forEach(el=>{if(!el.closest('.hero'))obs.observe(el);});
+function closeGameModal(){
 
-/* ─── COUNT UP ─── */
-const cObs=new IntersectionObserver(entries=>{
+  ov.classList.remove('open');
+  document.body.style.overflow='';
+
+}
+
+mClose.addEventListener('click',closeGameModal);
+
+ov.addEventListener('click',e=>{
+  if(e.target===ov){
+    closeGameModal();
+  }
+});
+
+/* PLANS MODAL */
+
+const plansModal = document.getElementById('plans-modal');
+const openPlans = document.getElementById('openPlans');
+const plansClose = document.getElementById('plansClose');
+
+openPlans.addEventListener('click',()=>{
+
+  plansModal.classList.add('open');
+  document.body.style.overflow='hidden';
+
+});
+
+function closePlans(){
+
+  plansModal.classList.remove('open');
+  document.body.style.overflow='';
+
+}
+
+plansClose.addEventListener('click',closePlans);
+
+plansModal.addEventListener('click',e=>{
+
+  if(e.target===plansModal){
+    closePlans();
+  }
+
+});
+
+/* REVEAL */
+
+const obs = new IntersectionObserver(entries=>{
+
   entries.forEach(e=>{
-    if(!e.isIntersecting)return;
-    const el=e.target,target=+el.dataset.count;
-    let cur=0;const step=Math.ceil(target/38);
-    const iv=setInterval(()=>{cur=Math.min(cur+step,target);el.textContent=cur+(target>=10?'+':'');if(cur>=target)clearInterval(iv);},34);
-    cObs.unobserve(el);
+
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+    }
+
   });
-},{threshold:.5});
-document.querySelectorAll('.snum[data-count]').forEach(el=>cObs.observe(el));
+
+},{threshold:.1});
+
+document
+.querySelectorAll('.reveal')
+.forEach(el=>{
+
+  if(!el.closest('.hero')){
+    obs.observe(el);
+  }
+
+});
+
 </script>
+
 </body>
 </html>
