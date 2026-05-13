@@ -11,6 +11,9 @@
   --p0:#09050f; --p1:#120824; --p2:#1e0d3a;
   --pc:#6b21d6; --pb:#a855f7; --pg:#c084fc; --pe:#e9d5ff;
   --w:#f5f0ff; --off:#c4b5fd66;
+  --gold1:#facc15;
+--gold2:#f59e0b;
+--gold3:#fde68a;
   --border:rgba(168,85,247,0.15); --border2:rgba(168,85,247,0.08);
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
@@ -65,13 +68,31 @@ body::before{
 @keyframes lPop{0%{transform:scale(1);}30%{transform:scale(1.07);}55%{transform:scale(1.05)translateY(-5px);}80%{transform:scale(1.09);opacity:1;}100%{transform:scale(1.13);opacity:0;}}
 .l-base{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(60px,13vw,145px);letter-spacing:.03em;color:var(--w);position:relative;z-index:2;user-select:none;line-height:1;-webkit-text-stroke:1px rgba(200,160,255,.12);}
 .l-base.glow{text-shadow:0 0 80px rgba(168,85,247,.85),0 0 160px rgba(168,85,247,.3);transition:text-shadow .4s;}
-.l-canvas-wrap{position:absolute;inset:0;z-index:3;overflow:hidden;clip-path:inset(100% 0% 0% 0%);transition:clip-path .65s cubic-bezier(.22,.61,.36,1);}
+.l-canvas-wrap{
+  position:absolute;
+  inset:0;
+  z-index:3;
+  overflow:hidden;
+  clip-path:inset(100% 0% 0% 0%);
+  transition:clip-path .65s cubic-bezier(.22,.61,.36,1);
+
+  -webkit-mask-image:text;
+  -webkit-mask-repeat:no-repeat;
+  -webkit-mask-position:center;
+  -webkit-mask-size:contain;
+}
 .l-canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;}
 .l-fill{position:absolute;inset:0;font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(60px,13vw,145px);letter-spacing:.03em;line-height:1;user-select:none;background:linear-gradient(160deg,var(--pg) 0%,var(--pb) 40%,var(--pc) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;justify-content:center;white-space:nowrap;z-index:4;}
 .l-progress{width:min(250px,70vw);height:1px;background:rgba(168,85,247,.1);border-radius:99px;overflow:hidden;margin-bottom:38px;}
 .l-pfill{height:100%;width:0%;background:linear-gradient(90deg,var(--pc),var(--pg));border-radius:99px;transition:width .5s ease;box-shadow:0 0 10px var(--pb);}
 .l-footer{position:absolute;bottom:30px;font-family:'Space Mono',monospace;font-size:clamp(8px,2vw,10px);letter-spacing:.28em;text-transform:uppercase;color:rgba(196,181,253,.3);}
 .l-footer em{color:var(--pb);font-style:normal;}
+  .gold{
+  background:linear-gradient(135deg,var(--gold3),var(--gold1),var(--gold2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
 
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease;}
@@ -235,7 +256,9 @@ footer{border-top:1px solid var(--border);padding:clamp(28px,5vw,48px) clamp(18p
     <div class="hero-orb a"></div><div class="hero-orb b"></div><div class="hero-orb c"></div>
     <p class="hero-eye reveal">Roblox Script Hub</p>
     <h1 class="hero-h1 reveal rd1">KYO<br><span class="acc">HUB</span></h1>
-    <p class="hero-p reveal rd2">A free, premium-grade multi-game hub. Built fast, kept clean, updated constantly. One script, every game.</p>
+    <p class="hero-p reveal rd2">
+Two versions available: <span class="gold">Premium — only $5</span> and Free. Same clean experience, choose the version that fits you best.
+</p>
     <div class="hero-cta reveal rd3">
       <a href="https://github.com/zKiroNany/Kyo-Hub" class="btn-p" target="_blank">Get on GitHub</a>
       <a href="#games" class="btn-g">View Games</a>
@@ -250,7 +273,8 @@ footer{border-top:1px solid var(--border);padding:clamp(28px,5vw,48px) clamp(18p
     <div class="stats-grid">
       <div class="sc reveal"><div class="snum" data-count="7">0</div><div class="slbl">Games Supported</div></div>
       <div class="sc reveal rd1"><div class="snum" data-count="60">0</div><div class="slbl">Automation Features</div></div>
-      <div class="sc reveal rd2"><div class="snum">100%</div><div class="slbl">Free Forever</div></div>
+      <div class="snum">$5</div>
+<div class="slbl">Premium Access</div>
       <div class="sc reveal rd3"><div class="snum">∞</div><div class="slbl">Community Driven</div></div>
     </div>
   </div>
@@ -263,7 +287,11 @@ footer{border-top:1px solid var(--border);padding:clamp(28px,5vw,48px) clamp(18p
       <p class="sec-p reveal rd2">Not just another script. Kyo Hub is engineered to be fast, stable, and invisible — doing exactly what you need without getting in the way.</p>
       <div class="feat-grid">
         <div class="fc reveal"><div class="fn">01</div><div class="ft">Blazing Fast</div><div class="fd">Frame-perfect execution on every feature. Zero lag on low-end devices. Optimized loops that respect your FPS and never throttle your game.</div><span class="fb">Performance</span></div>
-        <div class="fc reveal rd1"><div class="fn">02</div><div class="ft">Always Free</div><div class="fd">No keys. No paywalls. No premium tiers. Every feature — from basic automation to advanced combat tools — is available to everyone, forever.</div><span class="fb">Access</span></div>
+       <div class="ft">Free & <span class="gold">Premium</span></div>
+<div class="fd">
+Use the completely free version or unlock the <span class="gold">Premium version for only $5</span> with enhanced features, faster updates and exclusive modules.
+</div>
+<span class="fb">Plans</span>
         <div class="fc reveal rd2"><div class="fn">03</div><div class="ft">Rock Solid Stability</div><div class="fd">Engineered with error isolation. If one feature breaks, nothing else goes down. Smart recovery keeps your session running no matter what.</div><span class="fb">Reliability</span></div>
         <div class="fc reveal rd3"><div class="fn">04</div><div class="ft">Multi-Game Ready</div><div class="fd">One loader, seven games and growing. Each game module is fully isolated — updates to one never break another. Switch games, same hub.</div><span class="fb">Versatility</span></div>
         <div class="fc reveal rd4"><div class="fn">05</div><div class="ft">Deep Automation</div><div class="fd">From farming and grinding to rolling and collecting — every repetitive task is handled automatically, so you can focus on what actually matters.</div><span class="fb">Automation</span></div>
@@ -293,7 +321,9 @@ footer{border-top:1px solid var(--border);padding:clamp(28px,5vw,48px) clamp(18p
       <div>
         <p class="sec-eye reveal">// the project</p>
         <h2 class="sec-h reveal rd1">Made by a<br><span class="dim">Developer,</span><br>for Players.</h2>
-        <p class="sec-p reveal rd2" style="margin-top:14px;">Kyo Hub is a solo passion project — no corporation, no team, no monetization agenda. Just clean code, shipped fast, maintained with care.</p>
+        <p class="sec-p reveal rd2" style="margin-top:14px;">
+Kyo Hub is a solo passion project focused on quality and constant updates. Use the free version or unlock the <span class="gold">Premium edition for just $5</span>.
+</p>
         <div style="margin-top:28px;" class="reveal rd3"><a href="https://github.com/zKiroNany/Kyo-Hub" class="btn-p" target="_blank">View Source on GitHub</a></div>
       </div>
       <div class="ab-grid reveal rd2">
@@ -361,6 +391,34 @@ function drawWave(){
 const adjEl=document.getElementById('adjW');
 const lCW=document.getElementById('lCW');
 const lBase=document.getElementById('lBase');
+  function applyTextMask(){
+  const txt = lBase.textContent.trim();
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300">
+    <style>
+      text{
+        font-family:Montserrat,sans-serif;
+        font-weight:900;
+        font-size:190px;
+        letter-spacing:.03em;
+      }
+    </style>
+    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white">
+      ${txt}
+    </text>
+  </svg>`;
+
+  const url = `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+
+  lCW.style.webkitMaskImage = url;
+  lCW.style.maskImage = url;
+  lCW.style.webkitMaskRepeat = 'no-repeat';
+  lCW.style.maskRepeat = 'no-repeat';
+  lCW.style.webkitMaskPosition = 'center';
+  lCW.style.maskPosition = 'center';
+  lCW.style.webkitMaskSize = 'contain';
+  lCW.style.maskSize = 'contain';
+}
 const lWrap=document.getElementById('lWrap');
 const lPF=document.getElementById('lPF');
 const loader=document.getElementById('loader');
@@ -391,12 +449,16 @@ function runAdj(){
     const ct=100-Math.round(fillT*100);
     lCW.style.clipPath=`inset(${ct}% 0% 0% 0%)`;
     lPF.style.width=Math.round(fillT*100)+'%';
-    ai++;setTimeout(runAdj,475);
+    ai++;
+    const speed = Math.max(120, 475 - (ai * 42));
+setTimeout(runAdj, speed);
   },1050);
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
-  resizeCvs();drawWave();
+  resizeCvs();
+  applyTextMask();
+  drawWave();
   setTimeout(runAdj,550);
 });
 window.addEventListener('resize',resizeCvs);
